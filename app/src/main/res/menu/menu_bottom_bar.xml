@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menuSearch"
+        android:icon="@drawable/ic_rounded_search_24"
+        android:title="Search"
+        android:contentDescription="Search" />
+
+    <item
+        android:id="@+id/menuCalendar"
+        android:icon="@drawable/ic_rounded_calendar_month_24"
+        android:title="Calendar"
+        android:contentDescription="Calendar" />
+
+    <item
+        android:id="@+id/menuSettings"
+        android:icon="@drawable/ic_rounded_settings_24"
+        android:title="Settings"
+        android:contentDescription="Settings" />
+
+</menu>
