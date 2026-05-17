@@ -12,8 +12,8 @@ android {
         applicationId = "alfahrel.my.id.fola"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1-alpha"
+        versionCode = 2
+        versionName = "0.1.1-alpha"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".FolaApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -15,7 +16,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:theme="@style/Base.Theme.Fola">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -25,15 +27,23 @@
         <activity
             android:name=".CalendarActivity"
             android:exported="false"
+            android:theme="@style/Base.Theme.Fola"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".widget.FolaWidgetConfigActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Base.Theme.Fola">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ThemeActivity"
+            android:exported="false"
+            android:theme="@style/Base.Theme.Fola"
+            android:windowSoftInputMode="adjustResize" />
 
         <receiver
             android:name=".widget.FolaWidgetProvider"
@@ -52,7 +62,9 @@
             android:permission="android.permission.BIND_REMOTEVIEWS"
             android:exported="false" />
 
-        <receiver android:name=".widget.CalendarWidgetProvider" android:exported="true">
+        <receiver
+            android:name=".widget.CalendarWidgetProvider"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="alfahrel.my.id.kalender.WIDGET_PREV" />
@@ -63,15 +75,13 @@
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_calendar_info"
-                />
+                android:resource="@xml/widget_calendar_info" />
         </receiver>
 
         <service
             android:name=".widget.CalendarWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS"
-            android:exported="false"
-            />
+            android:exported="false" />
 
     </application>
 

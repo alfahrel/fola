@@ -6,9 +6,8 @@
     android:orientation="vertical"
     android:padding="24dp">
 
-    <com.google.android.material.button.MaterialButtonGroup
+    <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/categoryGroup"
-        style="@style/Widget.Material3.MaterialButtonGroup.Connected"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
@@ -17,7 +16,6 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCatTask"
-            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -27,14 +25,12 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCatHabit"
-            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checkable="true"
             android:text="Habit" />
-
-    </com.google.android.material.button.MaterialButtonGroup>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilTitle"
@@ -53,7 +49,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textCapSentences" />
-
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
@@ -79,7 +74,6 @@
             android:layout_marginBottom="12dp"
             android:text="Pick due date (optional)"
             app:icon="@drawable/ic_rounded_calendar_month_24" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -115,9 +109,8 @@
             android:textAppearance="?attr/textAppearanceLabelLarge"
             android:textColor="?attr/colorOnSurfaceVariant" />
 
-        <com.google.android.material.button.MaterialButtonGroup
+        <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/repeatGroup"
-            style="@style/Widget.Material3.MaterialButtonGroup.Connected"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
@@ -126,7 +119,6 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRepeatDaily"
-                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -136,7 +128,6 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRepeatWeekly"
-                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -145,7 +136,6 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRepeatMonthly"
-                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -154,14 +144,12 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRepeatCustom"
-                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checkable="true"
                 android:text="Custom" />
-
-        </com.google.android.material.button.MaterialButtonGroup>
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <LinearLayout
             android:id="@+id/layoutCustomRepeat"
@@ -197,7 +185,6 @@
                     android:inputType="number"
                     android:text="1"
                     android:textAlignment="center" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -218,9 +205,7 @@
                     android:focusable="false"
                     android:inputType="none"
                     android:text="days" />
-
             </com.google.android.material.textfield.TextInputLayout>
-
         </LinearLayout>
     </LinearLayout>
 
@@ -233,5 +218,4 @@
         android:text="Save"
         android:textSize="16sp"
         android:textStyle="bold" />
-
 </LinearLayout>

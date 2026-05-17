@@ -37,4 +37,55 @@
         <item name="android:textAppearance">?attr/textAppearanceLabelSmall</item>
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
     </style>
+
+    <style name="ThemeOverlay.Fola.Default" parent="">
+        <item name="colorPrimary">#9FDD5D</item>
+        <item name="colorOnPrimary">#1E3700</item>
+        <item name="colorPrimaryContainer">#2D5000</item>
+        <item name="colorOnPrimaryContainer">#BAFA76</item>
+        <item name="colorPrimaryFixed">#BAFA76</item>
+        <item name="colorPrimaryFixedDim">#9FDD5D</item>
+        <item name="colorOnPrimaryFixed">#112000</item>
+        <item name="colorOnPrimaryFixedVariant">#2D5000</item>
+
+        <item name="colorSecondary">#B6CDA1</item>
+        <item name="colorOnSecondary">#223516</item>
+        <item name="colorSecondaryContainer">#394C2A</item>
+        <item name="colorOnSecondaryContainer">#D2EABC</item>
+        <item name="colorSecondaryFixed">#D2EABC</item>
+        <item name="colorSecondaryFixedDim">#B6CDA1</item>
+        <item name="colorOnSecondaryFixed">#0E1F04</item>
+        <item name="colorOnSecondaryFixedVariant">#394C2A</item>
+
+        <item name="colorTertiary">#9FCFCF</item>
+        <item name="colorOnTertiary">#003737</item>
+        <item name="colorTertiaryContainer">#1F4E4E</item>
+        <item name="colorOnTertiaryContainer">#BBECEB</item>
+        <item name="colorTertiaryFixed">#BBECEB</item>
+        <item name="colorTertiaryFixedDim">#9FCFCF</item>
+        <item name="colorOnTertiaryFixed">#002020</item>
+        <item name="colorOnTertiaryFixedVariant">#1F4E4E</item>
+
+        <item name="colorSurface">#11140B</item>
+        <item name="colorOnSurface">#E1E3D7</item>
+        <item name="colorSurfaceVariant">#43483C</item>
+        <item name="colorOnSurfaceVariant">#C3C8B9</item>
+        <item name="colorSurfaceContainerLowest">#0B0F07</item>
+        <item name="colorSurfaceContainerLow">#191D13</item>
+        <item name="colorSurfaceContainer">#1D2117</item>
+        <item name="colorSurfaceContainerHigh">#282B21</item>
+        <item name="colorSurfaceContainerHighest">#32362B</item>
+        <item name="colorSurfaceDim">#11140B</item>
+        <item name="colorSurfaceBright">#37392E</item>
+
+        <item name="colorOutline">#8D9282</item>
+        <item name="colorOutlineVariant">#43483C</item>
+
+        <item name="colorSurfaceInverse">#E1E3D7</item>
+        <item name="colorOnSurfaceInverse">#2E3127</item>
+        <item name="colorPrimaryInverse">#3E6A00</item>
+
+        <item name="android:colorBackground">#11140B</item>
+        <item name="colorOnBackground">#E1E3D7</item>
+    </style>
 </resources>

@@ -29,9 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin" />
-
         </com.google.android.material.appbar.CollapsingToolbarLayout>
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -48,50 +46,12 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <com.google.android.material.button.MaterialButtonGroup
-                android:id="@+id/categoryGroup"
-                style="@style/Widget.Material3.MaterialButtonGroup.Connected"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:singleSelection="true"
-                app:selectionRequired="true">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnCatAll"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checkable="true"
-                    android:checked="true"
-                    android:text="All" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnCatTask"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checkable="true"
-                    android:text="Task" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnCatHabit"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checkable="true"
-                    android:text="Habit" />
-
-            </com.google.android.material.button.MaterialButtonGroup>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilDateFilter"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="6dp"
                 android:hint="Date">
 
                 <AutoCompleteTextView
@@ -103,8 +63,42 @@
                     android:text="All"
                     android:paddingStart="12dp"
                     android:paddingEnd="12dp" />
-
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/categoryGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                android:layout_marginBottom="6dp"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCatAll"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checkable="true"
+                    android:checked="true"
+                    android:text="All" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCatTask"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checkable="true"
+                    android:text="Task" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCatHabit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checkable="true"
+                    android:text="Habit" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
 
 
             <LinearLayout
@@ -137,7 +131,6 @@
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:alpha="0.3"
                     android:layout_marginTop="4dp" />
-
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -145,9 +138,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false" />
-
         </LinearLayout>
-
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -159,5 +150,4 @@
         android:contentDescription="Add"
         android:text="Add"
         app:icon="@drawable/ic_rounded_add_24" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

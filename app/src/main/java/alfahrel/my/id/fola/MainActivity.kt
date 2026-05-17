@@ -23,9 +23,9 @@ import alfahrel.my.id.fola.ui.sheet.AddSheet
 import alfahrel.my.id.fola.ui.sheet.EditSheet
 import alfahrel.my.id.fola.widget.FolaWidgetProvider
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -45,7 +45,7 @@ class MainActivity : BaseActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        repo        = FolaRepository(FolaDatabase.getInstance(this))
+        repo = FolaRepository(FolaDatabase.getInstance(this))
         layoutEmpty = findViewById(R.id.layoutEmpty)
 
         setupToolbar()
@@ -78,6 +78,10 @@ class MainActivity : BaseActivity() {
                 startActivity(Intent(this, CalendarActivity::class.java))
                 true
             }
+            R.id.action_theme -> {
+                startActivity(Intent(this, ThemeActivity::class.java))
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -88,49 +92,51 @@ class MainActivity : BaseActivity() {
 
     private fun setupRecyclerView() {
         recyclerView = findViewById(R.id.rvTasks)
-        taskAdapter  = TaskAdapter(
-            onToggle    = { task, checked ->
+        taskAdapter = TaskAdapter(
+            onToggle = { task, checked ->
                 lifecycleScope.launch {
                     repo.setTaskCompleted(task.id, checked)
                     notifyWidget()
                 }
             },
             onLongClick = { _ -> },
-            onDelete    = { task -> deleteWithUndo(task) },
-            onEdit      = { task -> openEditSheet(task) }
+            onDelete = { task -> deleteWithUndo(task) },
+            onEdit = { task -> openEditSheet(task) }
         )
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter       = taskAdapter
+            adapter = taskAdapter
         }
         taskAdapter.attachSwipeToDelete(recyclerView)
     }
 
     private fun setupCategoryFilter() {
-        val btnCatAll   = findViewById<MaterialButton>(R.id.btnCatAll)
-        val btnCatTask  = findViewById<MaterialButton>(R.id.btnCatTask)
+        val categoryGroup = findViewById<MaterialButtonToggleGroup>(R.id.categoryGroup)
+        val btnCatAll = findViewById<MaterialButton>(R.id.btnCatAll)
+        val btnCatTask = findViewById<MaterialButton>(R.id.btnCatTask)
         val btnCatHabit = findViewById<MaterialButton>(R.id.btnCatHabit)
-        val buttons     = listOf(btnCatAll, btnCatTask, btnCatHabit)
-        val filterMap   = mapOf(btnCatAll to null, btnCatTask to "Task", btnCatHabit to "Habit")
 
-        fun select(selected: MaterialButton) {
-            buttons.forEach { it.isChecked = false }
-            selected.isChecked = true
-            taskAdapter.setFilter(filterMap[selected])
+        val filterMap = mapOf(
+            R.id.btnCatAll to null,
+            R.id.btnCatTask to "Task",
+            R.id.btnCatHabit to "Habit"
+        )
+
+        categoryGroup.check(R.id.btnCatAll)
+        categoryGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            taskAdapter.setFilter(filterMap[checkedId])
             updateEmptyState()
         }
-
-        buttons.forEach { btn -> btn.setOnClickListener { select(btn) } }
-        select(btnCatAll)
     }
 
     private fun setupDateFilter() {
         val autoCompleteTextView = findViewById<AutoCompleteTextView>(R.id.actvDateFilter)
 
         val dateFilters = listOf(
-            "All"       to null,
-            "Today"     to 0,
-            "Tomorrow"  to 1,
+            "All" to null,
+            "Today" to 0,
+            "Tomorrow" to 1,
             "This Week" to 7
         )
 
@@ -140,10 +146,13 @@ class MainActivity : BaseActivity() {
             dateFilters.map { it.first }
         )
         autoCompleteTextView.setAdapter(adapter)
+
         autoCompleteTextView.setText("All", false)
+        taskAdapter.setDateFilter(null)
 
         autoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
-            taskAdapter.setDateFilter(dateFilters[position].second)
+            val selectedFilter = dateFilters[position].second
+            taskAdapter.setDateFilter(selectedFilter)
             updateEmptyState()
         }
     }
@@ -184,7 +193,7 @@ class MainActivity : BaseActivity() {
 
     private fun openEditSheet(task: Task) {
         EditSheet(
-            task         = task,
+            task = task,
             onUpdateTask = { updated ->
                 lifecycleScope.launch {
                     repo.updateTask(updated)
@@ -213,7 +222,7 @@ class MainActivity : BaseActivity() {
 
     private fun notifyWidget() {
         val manager = AppWidgetManager.getInstance(this)
-        val ids     = manager.getAppWidgetIds(ComponentName(this, FolaWidgetProvider::class.java))
+        val ids = manager.getAppWidgetIds(ComponentName(this, FolaWidgetProvider::class.java))
         ids.forEach { FolaWidgetProvider.updateWidget(this, manager, it) }
     }
 }

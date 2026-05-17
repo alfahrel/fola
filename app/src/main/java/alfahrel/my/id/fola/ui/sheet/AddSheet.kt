@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -23,14 +24,14 @@ class AddSheet(
     private val onSaveTask: (Task) -> Unit
 ) : BottomSheetDialogFragment() {
 
-    private var selectedDueDateMs:       Long?   = null
-    private var selectedCategory:        String  = "Task"
-    private var isRepeat:                Boolean = false
-    private var selectedRepeat:          RepeatType = RepeatType.DAILY
-    private var selectedUnit:            String  = "days"
-    private var selectedStartDateMs:     Long?   = null
-    private var selectedHabitStartDateMs: Long?  = null
-    private var selectedHabitEndDateMs:   Long?  = null
+    private var selectedDueDateMs: Long? = null
+    private var selectedCategory: String = "Task"
+    private var isRepeat: Boolean = false
+    private var selectedRepeat: RepeatType = RepeatType.DAILY
+    private var selectedUnit: String = "days"
+    private var selectedStartDateMs: Long? = null
+    private var selectedHabitStartDateMs: Long? = null
+    private var selectedHabitEndDateMs: Long? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,39 +42,32 @@ class AddSheet(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val tilTitle          = view.findViewById<TextInputLayout>(R.id.tilTitle)
-        val etTitle           = view.findViewById<TextInputEditText>(R.id.etTitle)
-        val etInterval        = view.findViewById<TextInputEditText>(R.id.etInterval)
+        val tilTitle = view.findViewById<TextInputLayout>(R.id.tilTitle)
+        val etTitle = view.findViewById<TextInputEditText>(R.id.etTitle)
+        val etInterval = view.findViewById<TextInputEditText>(R.id.etInterval)
         val layoutTaskOptions = view.findViewById<LinearLayout>(R.id.layoutTaskOptions)
-        val layoutHabit       = view.findViewById<LinearLayout>(R.id.layoutHabitOptions)
-        val layoutCustom      = view.findViewById<LinearLayout>(R.id.layoutCustomRepeat)
+        val layoutHabit = view.findViewById<LinearLayout>(R.id.layoutHabitOptions)
+        val layoutCustom = view.findViewById<LinearLayout>(R.id.layoutCustomRepeat)
 
-        val btnCatTask  = view.findViewById<MaterialButton>(R.id.btnCatTask)
-        val btnCatHabit = view.findViewById<MaterialButton>(R.id.btnCatHabit)
-        val catBtns     = listOf(btnCatTask, btnCatHabit)
-
-        fun selectCategory(chosen: MaterialButton) {
-            catBtns.forEach { it.isChecked = it === chosen }
-            when (chosen) {
-                btnCatTask -> {
-                    selectedCategory             = "Task"
+        val categoryGroup = view.findViewById<MaterialButtonToggleGroup>(R.id.categoryGroup)
+        categoryGroup.check(R.id.btnCatTask)
+        categoryGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            when (checkedId) {
+                R.id.btnCatTask -> {
+                    selectedCategory = "Task"
                     layoutTaskOptions.visibility = View.VISIBLE
-                    layoutHabit.visibility       = View.GONE
-                    isRepeat                     = false
+                    layoutHabit.visibility = View.GONE
+                    isRepeat = false
                 }
-                btnCatHabit -> {
-                    selectedCategory             = "Habit"
+                R.id.btnCatHabit -> {
+                    selectedCategory = "Habit"
                     layoutTaskOptions.visibility = View.GONE
-                    layoutHabit.visibility       = View.VISIBLE
-                    isRepeat                     = true
+                    layoutHabit.visibility = View.VISIBLE
+                    isRepeat = true
                 }
             }
         }
-
-        catBtns.forEach { it.isCheckable = true }
-        selectCategory(btnCatTask)
-        btnCatTask.setOnClickListener  { selectCategory(btnCatTask)  }
-        btnCatHabit.setOnClickListener { selectCategory(btnCatHabit) }
 
         val btnPickStartDate = view.findViewById<MaterialButton>(R.id.btnPickStartDate)
         btnPickStartDate.setOnClickListener {
@@ -82,7 +76,7 @@ class AddSheet(
                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                 .build()
             picker.addOnPositiveButtonClickListener { millis ->
-                selectedStartDateMs   = millis
+                selectedStartDateMs = millis
                 btnPickStartDate.text = SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(millis)
             }
             picker.show(parentFragmentManager, "start_date_picker")
@@ -96,7 +90,7 @@ class AddSheet(
                 .build()
             picker.addOnPositiveButtonClickListener { millis ->
                 selectedDueDateMs = millis
-                btnPickDate.text  = SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(millis)
+                btnPickDate.text = SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(millis)
             }
             picker.show(parentFragmentManager, "date_picker")
         }
@@ -108,7 +102,7 @@ class AddSheet(
                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                 .build()
             picker.addOnPositiveButtonClickListener { millis ->
-                selectedHabitStartDateMs   = millis
+                selectedHabitStartDateMs = millis
                 btnPickHabitStartDate.text = SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(millis)
             }
             picker.show(parentFragmentManager, "habit_start_date_picker")
@@ -121,33 +115,27 @@ class AddSheet(
                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                 .build()
             picker.addOnPositiveButtonClickListener { millis ->
-                selectedHabitEndDateMs   = millis
+                selectedHabitEndDateMs = millis
                 btnPickHabitEndDate.text = SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(millis)
             }
             picker.show(parentFragmentManager, "habit_end_date_picker")
         }
 
-        val btnRepeatDaily   = view.findViewById<MaterialButton>(R.id.btnRepeatDaily)
-        val btnRepeatWeekly  = view.findViewById<MaterialButton>(R.id.btnRepeatWeekly)
-        val btnRepeatMonthly = view.findViewById<MaterialButton>(R.id.btnRepeatMonthly)
-        val btnRepeatCustom  = view.findViewById<MaterialButton>(R.id.btnRepeatCustom)
-        val repeatBtns       = listOf(btnRepeatDaily, btnRepeatWeekly, btnRepeatMonthly, btnRepeatCustom)
-
-        fun selectRepeat(chosen: MaterialButton, type: RepeatType) {
-            repeatBtns.forEach { it.isChecked = it === chosen }
-            selectedRepeat          = type
-            layoutCustom.visibility = if (type == RepeatType.CUSTOM) View.VISIBLE else View.GONE
+        val repeatGroup = view.findViewById<MaterialButtonToggleGroup>(R.id.repeatGroup)
+        repeatGroup.check(R.id.btnRepeatDaily)
+        repeatGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            selectedRepeat = when (checkedId) {
+                R.id.btnRepeatDaily -> RepeatType.DAILY
+                R.id.btnRepeatWeekly -> RepeatType.WEEKLY
+                R.id.btnRepeatMonthly -> RepeatType.MONTHLY
+                else -> RepeatType.CUSTOM
+            }
+            layoutCustom.visibility = if (selectedRepeat == RepeatType.CUSTOM) View.VISIBLE else View.GONE
         }
 
-        repeatBtns.forEach { it.isCheckable = true }
-        selectRepeat(btnRepeatDaily, RepeatType.DAILY)
-        btnRepeatDaily.setOnClickListener   { selectRepeat(btnRepeatDaily,   RepeatType.DAILY)   }
-        btnRepeatWeekly.setOnClickListener  { selectRepeat(btnRepeatWeekly,  RepeatType.WEEKLY)  }
-        btnRepeatMonthly.setOnClickListener { selectRepeat(btnRepeatMonthly, RepeatType.MONTHLY) }
-        btnRepeatCustom.setOnClickListener  { selectRepeat(btnRepeatCustom,  RepeatType.CUSTOM)  }
-
-        val actvUnit    = view.findViewById<AutoCompleteTextView>(R.id.actvUnit)
-        val units       = listOf("days", "weeks", "months", "years")
+        val actvUnit = view.findViewById<AutoCompleteTextView>(R.id.actvUnit)
+        val units = listOf("days", "weeks", "months", "years")
         val unitAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, units)
         actvUnit.setAdapter(unitAdapter)
         actvUnit.setText("days", false)
@@ -165,14 +153,14 @@ class AddSheet(
 
             onSaveTask(
                 Task(
-                    title          = title,
-                    category       = selectedCategory,
-                    startDateMs    = if (selectedCategory == "Habit") selectedHabitStartDateMs else selectedStartDateMs,
-                    dueDateMs      = if (selectedCategory == "Habit") selectedHabitEndDateMs   else selectedDueDateMs,
-                    isRepeat       = isRepeat,
-                    repeatType     = selectedRepeat,
+                    title = title,
+                    category = selectedCategory,
+                    startDateMs = if (selectedCategory == "Habit") selectedHabitStartDateMs else selectedStartDateMs,
+                    dueDateMs = if (selectedCategory == "Habit") selectedHabitEndDateMs else selectedDueDateMs,
+                    isRepeat = isRepeat,
+                    repeatType = selectedRepeat,
                     repeatInterval = interval,
-                    repeatUnit     = selectedUnit
+                    repeatUnit = selectedUnit
                 )
             )
             dismiss()
