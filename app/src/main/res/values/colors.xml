@@ -2,4 +2,16 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="widget_text_primary">#1F1F2E</color>
+    <color name="widget_text_secondary">#6B6B8A</color>
+    <color name="widget_today_text">#FFFFFF</color>
+
+    <color name="widget_overdue_bg">#FFDAD6</color>
+    <color name="widget_overdue_text">#410002</color>
+    <color name="widget_card_normal_bg">#F3F1FF</color>
+
+    <color name="widget_text_sunday">#D03B3B</color>
+    <color name="widget_arrow">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
+
 </resources>

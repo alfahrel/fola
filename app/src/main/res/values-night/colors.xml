@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="widget_text_primary">#E8E8F0</color>
+    <color name="widget_text_secondary">#9A9AB0</color>
+    <color name="widget_today_text">#FFFFFF</color>
+    <color name="widget_overdue_bg">#93000A</color>
+    <color name="widget_overdue_text">#FFDAD6</color>
+    <color name="widget_card_normal_bg">#1E1B2E</color>
+
+    <color name="widget_text_sunday">#FF6B6B</color>
+    <color name="widget_arrow">#FFFFFF</color>
+
+</resources>

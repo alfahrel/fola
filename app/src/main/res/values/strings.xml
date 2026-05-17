@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Fola</string>
+    <string name="widget_description">Fola – today\'s tasks at a glance</string>
+    <string-array name="month_names">
+        <item>Januari</item>
+        <item>Februari</item>
+        <item>Maret</item>
+        <item>April</item>
+        <item>Mei</item>
+        <item>Juni</item>
+        <item>Juli</item>
+        <item>Agustus</item>
+        <item>September</item>
+        <item>Oktober</item>
+        <item>November</item>
+        <item>Desember</item>
+    </string-array>
 </resources>

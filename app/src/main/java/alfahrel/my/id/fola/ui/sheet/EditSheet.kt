@@ -24,12 +24,14 @@ class EditSheet(
     private val onUpdateTask: (Task) -> Unit
 ) : BottomSheetDialogFragment() {
 
-    private var selectedDateMs: Long?      = task.dueDateMs
-    private var selectedCategory: String   = task.category
-    private var isRepeat: Boolean          = task.isRepeat
-    private var selectedRepeat: RepeatType = task.repeatType
-    private var selectedUnit: String       = task.repeatUnit
-    private var selectedStartDateMs: Long? = task.startDateMs
+    private var selectedDueDateMs:        Long?       = task.dueDateMs
+    private var selectedCategory:         String      = task.category
+    private var isRepeat:                 Boolean     = task.isRepeat
+    private var selectedRepeat:           RepeatType  = task.repeatType
+    private var selectedUnit:             String      = task.repeatUnit
+    private var selectedStartDateMs:      Long?       = if (task.category != "Habit") task.startDateMs else null
+    private var selectedHabitStartDateMs: Long?       = if (task.category == "Habit") task.startDateMs else null
+    private var selectedHabitEndDateMs:   Long?       = if (task.category == "Habit") task.dueDateMs   else null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,6 +48,7 @@ class EditSheet(
         val layoutTaskOptions = view.findViewById<LinearLayout>(R.id.layoutTaskOptions)
         val layoutHabit       = view.findViewById<LinearLayout>(R.id.layoutHabitOptions)
         val layoutCustom      = view.findViewById<LinearLayout>(R.id.layoutCustomRepeat)
+        val fmt               = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
 
         etTitle.setText(task.title)
         if (task.repeatType == RepeatType.CUSTOM && task.repeatInterval > 1) {
@@ -80,35 +83,59 @@ class EditSheet(
         btnCatHabit.setOnClickListener { selectCategory(btnCatHabit) }
 
         val btnPickStartDate = view.findViewById<MaterialButton>(R.id.btnPickStartDate)
-        task.startDateMs?.let {
-            btnPickStartDate.text = SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(it)
-        }
+        selectedStartDateMs?.let { btnPickStartDate.text = fmt.format(it) }
         btnPickStartDate.setOnClickListener {
             val picker = MaterialDatePicker.Builder.datePicker()
                 .setTitleText("Select start date")
                 .setSelection(selectedStartDateMs ?: MaterialDatePicker.todayInUtcMilliseconds())
                 .build()
             picker.addOnPositiveButtonClickListener { millis ->
-                selectedStartDateMs  = millis
-                btnPickStartDate.text = SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(millis)
+                selectedStartDateMs   = millis
+                btnPickStartDate.text = fmt.format(millis)
             }
             picker.show(parentFragmentManager, "start_date_picker")
         }
 
         val btnPickDate = view.findViewById<MaterialButton>(R.id.btnPickDate)
-        task.dueDateMs?.let {
-            btnPickDate.text = SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(it)
-        }
+        if (task.category != "Habit") selectedDueDateMs?.let { btnPickDate.text = fmt.format(it) }
         btnPickDate.setOnClickListener {
             val picker = MaterialDatePicker.Builder.datePicker()
                 .setTitleText("Select due date")
-                .setSelection(selectedDateMs ?: MaterialDatePicker.todayInUtcMilliseconds())
+                .setSelection(selectedDueDateMs ?: MaterialDatePicker.todayInUtcMilliseconds())
                 .build()
             picker.addOnPositiveButtonClickListener { millis ->
-                selectedDateMs   = millis
-                btnPickDate.text = SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(millis)
+                selectedDueDateMs = millis
+                btnPickDate.text  = fmt.format(millis)
             }
             picker.show(parentFragmentManager, "date_picker")
+        }
+
+        val btnPickHabitStartDate = view.findViewById<MaterialButton>(R.id.btnPickHabitStartDate)
+        selectedHabitStartDateMs?.let { btnPickHabitStartDate.text = fmt.format(it) }
+        btnPickHabitStartDate.setOnClickListener {
+            val picker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Select habit start date")
+                .setSelection(selectedHabitStartDateMs ?: MaterialDatePicker.todayInUtcMilliseconds())
+                .build()
+            picker.addOnPositiveButtonClickListener { millis ->
+                selectedHabitStartDateMs   = millis
+                btnPickHabitStartDate.text = fmt.format(millis)
+            }
+            picker.show(parentFragmentManager, "habit_start_date_picker")
+        }
+
+        val btnPickHabitEndDate = view.findViewById<MaterialButton>(R.id.btnPickHabitEndDate)
+        selectedHabitEndDateMs?.let { btnPickHabitEndDate.text = fmt.format(it) }
+        btnPickHabitEndDate.setOnClickListener {
+            val picker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Select habit end date")
+                .setSelection(selectedHabitEndDateMs ?: MaterialDatePicker.todayInUtcMilliseconds())
+                .build()
+            picker.addOnPositiveButtonClickListener { millis ->
+                selectedHabitEndDateMs   = millis
+                btnPickHabitEndDate.text = fmt.format(millis)
+            }
+            picker.show(parentFragmentManager, "habit_end_date_picker")
         }
 
         val btnRepeatDaily   = view.findViewById<MaterialButton>(R.id.btnRepeatDaily)
@@ -135,14 +162,12 @@ class EditSheet(
         btnRepeatMonthly.setOnClickListener { selectRepeat(btnRepeatMonthly, RepeatType.MONTHLY) }
         btnRepeatCustom.setOnClickListener  { selectRepeat(btnRepeatCustom,  RepeatType.CUSTOM)  }
 
-        val actvUnit = view.findViewById<AutoCompleteTextView>(R.id.actvUnit)
-        val units = listOf("days", "weeks", "months", "years")
+        val actvUnit    = view.findViewById<AutoCompleteTextView>(R.id.actvUnit)
+        val units       = listOf("days", "weeks", "months", "years")
         val unitAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, units)
         actvUnit.setAdapter(unitAdapter)
         actvUnit.setText(task.repeatUnit, false)
-        actvUnit.setOnItemClickListener { _, _, position, _ ->
-            selectedUnit = units[position]
-        }
+        actvUnit.setOnItemClickListener { _, _, position, _ -> selectedUnit = units[position] }
 
         view.findViewById<Button>(R.id.btnSave).setOnClickListener {
             val title = etTitle.text?.toString()?.trim().orEmpty()
@@ -158,8 +183,8 @@ class EditSheet(
                 task.copy(
                     title          = title,
                     category       = selectedCategory,
-                    startDateMs    = selectedStartDateMs,
-                    dueDateMs      = selectedDateMs,
+                    startDateMs    = if (selectedCategory == "Habit") selectedHabitStartDateMs else selectedStartDateMs,
+                    dueDateMs      = if (selectedCategory == "Habit") selectedHabitEndDateMs   else selectedDueDateMs,
                     isRepeat       = isRepeat,
                     repeatType     = selectedRepeat,
                     repeatInterval = interval,

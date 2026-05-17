@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="widget_text_primary">@android:color/system_neutral1_900</color>
+    <color name="widget_text_secondary">@android:color/system_neutral2_600</color>
+    <color name="widget_today_text">@android:color/system_accent2_50</color>
+
+    <color name="widget_overdue_bg">#FFDAD6</color>
+    <color name="widget_overdue_text">#410002</color>
+    <color name="widget_card_normal_bg">@android:color/system_accent2_50</color>
+
+    <color name="widget_text_sunday">@android:color/system_accent3_700</color>
+    <color name="widget_arrow">@android:color/system_accent1_900</color>
+</resources>
