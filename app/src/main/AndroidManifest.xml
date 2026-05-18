@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:name=".FolaApp"
+        android:name=".util.App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,7 +14,7 @@
         android:theme="@style/Base.Theme.Fola">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.home.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/Base.Theme.Fola">
@@ -25,13 +25,13 @@
         </activity>
 
         <activity
-            android:name=".CalendarActivity"
+            android:name=".ui.calendar.CalendarActivity"
             android:exported="false"
             android:theme="@style/Base.Theme.Fola"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".widget.FolaWidgetConfigActivity"
+            android:name=".widget.TaskWidgetConfigActivity"
             android:exported="true"
             android:theme="@style/Base.Theme.Fola">
             <intent-filter>
@@ -40,13 +40,12 @@
         </activity>
 
         <activity
-            android:name=".ThemeActivity"
+            android:name=".ui.theme.ThemeActivity"
             android:exported="false"
-            android:theme="@style/Base.Theme.Fola"
             android:windowSoftInputMode="adjustResize" />
 
         <receiver
-            android:name=".widget.FolaWidgetProvider"
+            android:name=".widget.TaskWidgetProvider"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -54,11 +53,12 @@
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_fola_info" />
+                android:resource="@xml/widget_task_info" />
         </receiver>
 
         <service
-            android:name=".widget.FolaWidgetService"
+            android:name=".widget.TaskWidgetService"
+            android:theme="@style/Base.Theme.Fola"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             android:exported="false" />
 

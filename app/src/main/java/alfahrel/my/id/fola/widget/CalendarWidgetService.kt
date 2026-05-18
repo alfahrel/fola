@@ -6,8 +6,8 @@ import android.content.Intent
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import alfahrel.my.id.fola.R
-import alfahrel.my.id.fola.calendar.HolidayType
-import alfahrel.my.id.fola.calendar.HolidaysData
+import alfahrel.my.id.fola.ui.calendar.HolidayType
+import alfahrel.my.id.fola.ui.calendar.HolidaysData
 import java.util.Calendar
 
 class CalendarWidgetService : RemoteViewsService() {

@@ -9,4 +9,4 @@
     android:initialLayout="@layout/widget_calendar"
     android:widgetCategory="home_screen"
     android:previewLayout="@layout/widget_calendar"
-    android:description="@string/app_name" />
+    android:description="@string/widget_calendar_description" />

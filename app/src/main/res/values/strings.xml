@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Fola</string>
-    <string name="widget_description">Fola – today\'s tasks at a glance</string>
+    <string name="widget_task_description">today\'s tasks at a glance</string>
+    <string name="widget_calendar_description">calendar month</string>
     <string-array name="month_names">
         <item>Januari</item>
         <item>Februari</item>

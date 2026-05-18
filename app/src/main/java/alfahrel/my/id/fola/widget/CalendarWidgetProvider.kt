@@ -1,6 +1,6 @@
 package alfahrel.my.id.fola.widget
 
-import alfahrel.my.id.fola.CalendarActivity
+import alfahrel.my.id.fola.ui.calendar.CalendarActivity
 import alfahrel.my.id.fola.R
 import android.annotation.SuppressLint
 import android.app.AlarmManager
