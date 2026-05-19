@@ -236,8 +236,8 @@ class TaskAdapter(
         fun bind(title: String, expanded: Boolean) {
             tvHeader.text = title
             ivChevron.setImageResource(
-                if (expanded) R.drawable.ic_rounded_expand_circle_down_24
-                else          R.drawable.ic_rounded_expand_circle_up_24
+                if (expanded) R.drawable.ic_rounded_expand_circle_up_24
+                else          R.drawable.ic_rounded_expand_circle_down_24
             )
             itemView.setOnClickListener { toggleCompleted() }
         }

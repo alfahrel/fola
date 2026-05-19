@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Fola</string>
+    <string name="widget_task_description">tugas hari ini sekilas</string>
+    <string name="widget_calendar_description">kalender bulan</string>
+
+    <string name="filter_all">Semua</string>
+    <string name="filter_task">Tugas</string>
+    <string name="filter_habit">Kebiasaan</string>
+    <string name="filter_today">Hari ini</string>
+    <string name="filter_tomorrow">Besok</string>
+    <string name="filter_week">Minggu</string>
+    <string name="empty_title">Belum ada tugas</string>
+    <string name="empty_subtitle">Ketuk + untuk menambahkan</string>
+    <string name="fab_add">Tambah</string>
+    <string name="fab_add_desc">Tambah</string>
+
+    <string name="title_theme">Tema</string>
+    <string name="dark_mode_title">Mode gelap</string>
+    <string name="dark_mode_desc">Pilih kapan menggunakan warna gelap</string>
+    <string name="btn_system">Sistem</string>
+    <string name="btn_light">Terang</string>
+    <string name="btn_dark">Gelap</string>
+    <string name="dynamic_color_title">Warna dinamis</string>
+    <string name="dynamic_color_desc">Sesuaikan warna dengan wallpaper. Kembali ke kuning saat nonaktif.</string>
+    <string name="dialog_enable_dynamic_color">Aktifkan Warna Dinamis</string>
+    <string name="dialog_disable_dynamic_color">Nonaktifkan Warna Dinamis</string>
+    <string name="dialog_dynamic_color_message">Aplikasi akan dimulai ulang untuk menerapkan tema warna baru. Lanjutkan?</string>
+    <string name="btn_restart">Mulai ulang</string>
+    <string name="btn_cancel">Batal</string>
+
+    <string name="title_about">Tentang</string>
+    <string name="about_app_name">Fola</string>
+    <string name="about_description">Pengelola tugas yang sederhana dan ringan untuk Android.</string>
+    <string name="about_source_title">Kode sumber</string>
+    <string name="about_source_desc">Tersedia di GitHub</string>
+    <string name="btn_view_on_github">Lihat di GitHub</string>
+    <string name="about_license_title">Lisensi</string>
+    <string name="about_license_desc">GNU General Public License v3.0</string>
+    <string name="btn_view_license">Lihat lisensi</string>
+
+    <string name="title_export_import">Ekspor &amp; Impor</string>
+    <string name="export_title">Ekspor tugas</string>
+    <string name="export_desc">Simpan tugas ke file JSON di perangkat Anda</string>
+    <string name="export_label_include">Sertakan</string>
+    <string name="btn_export_all">Semua</string>
+    <string name="btn_export_active">Aktif</string>
+    <string name="btn_export_completed">Selesai</string>
+    <string name="btn_export">Ekspor ke JSON</string>
+    <string name="import_title">Impor tugas</string>
+    <string name="import_desc">Muat tugas dari file JSON yang telah diekspor</string>
+    <string name="import_label_conflict">Saat konflik</string>
+    <string name="btn_conflict_merge">Gabung</string>
+    <string name="btn_conflict_replace">Ganti</string>
+    <string name="btn_import">Impor dari JSON</string>
+    <string name="backup_info_title">Tentang file cadangan</string>
+    <string name="backup_info_desc">File diekspor sebagai fola_backup_&lt;tanggal&gt;.json. Gabung menambahkan tugas baru tanpa menghapus yang ada. Ganti menghapus semua tugas sebelum mengimpor.</string>
+    <string name="export_success">Berhasil mengekspor %d tugas</string>
+    <string name="export_failed">Ekspor gagal: %s</string>
+    <string name="import_failed">Impor gagal: %s</string>
+    <string name="import_confirm_title">Impor %d tugas?</string>
+    <string name="import_confirm_merge">Ini akan digabung dengan tugas yang ada. Lanjutkan?</string>
+    <string name="import_confirm_replace">Ini akan mengganti semua tugas yang ada. Lanjutkan?</string>
+    <string name="btn_import_confirm">Impor</string>
+    <string name="import_success">Berhasil mengimpor %d tugas</string>
+
+    <string name="title_language">Bahasa</string>
+    <string name="language_title">Bahasa aplikasi</string>
+    <string name="language_desc">Aplikasi akan dimulai ulang untuk menerapkan bahasa yang dipilih</string>
+    <string name="btn_lang_english">Inggris</string>
+    <string name="btn_lang_indonesian">Indonesia</string>
+    <string name="dialog_change_language">Ganti bahasa</string>
+    <string name="dialog_language_message">Aplikasi akan dimulai ulang untuk menerapkan bahasa baru. Lanjutkan?</string>
+
+    <string name="hint_title">Judul</string>
+    <string name="btn_pick_start_date">Pilih tanggal mulai (opsional)</string>
+    <string name="btn_pick_due_date">Pilih tanggal tenggat (opsional)</string>
+    <string name="btn_pick_habit_start_date">Pilih tanggal mulai (opsional)</string>
+    <string name="btn_pick_habit_end_date">Pilih tanggal selesai (opsional)</string>
+    <string name="label_repeat">Ulangi</string>
+    <string name="btn_repeat_daily">Harian</string>
+    <string name="btn_repeat_weekly">Mingguan</string>
+    <string name="btn_repeat_monthly">Bulanan</string>
+    <string name="btn_repeat_custom">Kustom</string>
+    <string name="label_every">Setiap</string>
+    <string name="btn_save">Simpan</string>
+
+    <string name="task_deleted">Tugas dihapus</string>
+    <string name="btn_undo">Batalkan</string>
+
+    <string name="debug_midnight">Midnight worker dijalankan</string>
+    <string name="menu_debug_midnight">[Debug] Jalankan Midnight</string>
+
+    <string name="menu_calendar">Kalender</string>
+    <string name="menu_theme">Tema</string>
+    <string name="menu_export_import">Ekspor &amp; Impor</string>
+    <string name="menu_about">Tentang</string>
+    <string name="menu_language">Bahasa</string>
+    <string name="calendar">Kalendar</string>
+    <string name="open_calendar">Buka Kalendar</string>
+    <string name="theme">Tema</string>
+    <string name="open_theme">Buka Tema</string>
+    <string name="export_amp_import"><![CDATA[Export & Import]]></string>
+    <string name="open_export_import">Buka Export Import</string>
+    <string name="about">Tentang</string>
+    <string name="open_about">Buka Tentang</string>
+    <string name="today">Hari ini</string>
+
+    <string name="title_widget_settings">Pengaturan Widget</string>
+    <string name="widget_config_section_filter">Filter</string>
+    <string name="widget_config_hint_date">Tanggal</string>
+    <string name="widget_config_section_display">Tampilan</string>
+    <string name="widget_config_show_completed">Tampilkan Tugas Selesai</string>
+    <string name="widget_config_show_completed_desc">Tampilkan bagian untuk tugas yang sudah selesai</string>
+    <string name="widget_config_show_category">Tampilkan Label Kategori</string>
+    <string name="widget_config_show_category_desc">Tampilkan chip Tugas atau Kebiasaan pada setiap item</string>
+    <string name="widget_config_show_date">Tampilkan Tanggal</string>
+    <string name="widget_config_show_date_desc">Tampilkan tanggal mulai dan tenggat pada setiap item</string>
+
+    <string-array name="month_names">
+        <item>Januari</item>
+        <item>Februari</item>
+        <item>Maret</item>
+        <item>April</item>
+        <item>Mei</item>
+        <item>Juni</item>
+        <item>Juli</item>
+        <item>Agustus</item>
+        <item>September</item>
+        <item>Oktober</item>
+        <item>November</item>
+        <item>Desember</item>
+    </string-array>
+</resources>

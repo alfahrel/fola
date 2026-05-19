@@ -22,7 +22,7 @@
             android:id="@+id/widget_btn_prev"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/ic_rounded_arrow_circle_left_24"
+            android:src="@drawable/ic_rounded_arrow_back_ios_24"
             android:background="@android:color/transparent"
             android:scaleType="centerInside"
             android:contentDescription="Bulan sebelumnya" />
@@ -41,7 +41,7 @@
             android:id="@+id/widget_btn_next"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/ic_rounded_arrow_circle_right_24"
+            android:src="@drawable/ic_rounded_arrow_forward_ios_24"
             android:background="@android:color/transparent"
             android:scaleType="centerInside"
             android:contentDescription="Bulan berikutnya" />

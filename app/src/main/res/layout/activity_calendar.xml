@@ -170,7 +170,7 @@
                     android:id="@+id/btnPrev"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_rounded_arrow_circle_left_24"
+                    android:src="@drawable/ic_rounded_arrow_back_ios_24"
                     android:contentDescription="Bulan sebelumnya"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     app:tint="?attr/colorOnPrimaryContainer" />
@@ -189,7 +189,7 @@
                     android:id="@+id/btnNext"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_rounded_arrow_circle_right_24"
+                    android:src="@drawable/ic_rounded_arrow_forward_ios_24"
                     android:contentDescription="Bulan berikutnya"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     app:tint="?attr/colorOnPrimaryContainer" />

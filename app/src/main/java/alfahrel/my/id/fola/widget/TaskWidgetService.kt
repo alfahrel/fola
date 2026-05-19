@@ -122,8 +122,8 @@ class TaskRemoteViewsFactory(
         views.setTextViewText(R.id.widgetHeaderText, "Completed (${completedTasks.size})")
         views.setImageViewResource(
             R.id.widgetHeaderChevron,
-            if (expanded) R.drawable.ic_rounded_expand_circle_down_24
-            else          R.drawable.ic_rounded_expand_circle_up_24
+            if (expanded) R.drawable.ic_rounded_expand_circle_up_24
+            else          R.drawable.ic_rounded_expand_circle_down_24
         )
         val fillIntent = Intent().apply {
             putExtra(TaskWidgetProvider.EXTRA_TASK_ID, -1L)

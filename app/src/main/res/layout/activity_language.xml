@@ -16,7 +16,7 @@
             android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            app:title="Language"
+            app:title="@string/title_language"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:expandedTitleMarginStart="16dp"
             app:expandedTitleMarginBottom="16dp"
@@ -64,14 +64,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:text="App language"
+                        android:text="@string/language_title"
                         android:textAppearance="?attr/textAppearanceTitleMedium" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
-                        android:text="Language switching is coming soon"
+                        android:text="@string/language_desc"
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -89,8 +89,7 @@
                             android:layout_weight="1"
                             android:checkable="true"
                             android:checked="true"
-                            android:enabled="false"
-                            android:text="English" />
+                            android:text="@string/btn_lang_english" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnLangIndonesian"
@@ -98,8 +97,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checkable="true"
-                            android:enabled="false"
-                            android:text="Indonesian" />
+                            android:text="@string/btn_lang_indonesian" />
 
                     </com.google.android.material.button.MaterialButtonToggleGroup>
 

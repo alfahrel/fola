@@ -16,7 +16,7 @@
             android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            app:title="Export &amp; Import"
+            app:title="@string/title_export_import"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:expandedTitleMarginStart="16dp"
             app:expandedTitleMarginBottom="16dp"
@@ -65,14 +65,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:text="Export tasks"
+                        android:text="@string/export_title"
                         android:textAppearance="?attr/textAppearanceTitleMedium" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
-                        android:text="Save your tasks to a JSON file on your device"
+                        android:text="@string/export_desc"
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -80,7 +80,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:text="Include"
+                        android:text="@string/export_label_include"
                         android:textAppearance="?attr/textAppearanceLabelMedium"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -99,7 +99,7 @@
                             android:layout_weight="1"
                             android:checkable="true"
                             android:checked="true"
-                            android:text="All" />
+                            android:text="@string/btn_export_all" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnExportActive"
@@ -107,7 +107,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checkable="true"
-                            android:text="Active" />
+                            android:text="@string/btn_export_active" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnExportCompleted"
@@ -115,7 +115,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checkable="true"
-                            android:text="Completed" />
+                            android:text="@string/btn_export_completed" />
 
                     </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -123,7 +123,7 @@
                         android:id="@+id/btnExport"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Export to JSON"
+                        android:text="@string/btn_export"
                         app:icon="@drawable/ic_rounded_expand_circle_down_24" />
 
                 </LinearLayout>
@@ -149,14 +149,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:text="Import tasks"
+                        android:text="@string/import_title"
                         android:textAppearance="?attr/textAppearanceTitleMedium" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
-                        android:text="Load tasks from a previously exported JSON file"
+                        android:text="@string/import_desc"
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -164,7 +164,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:text="On conflict"
+                        android:text="@string/import_label_conflict"
                         android:textAppearance="?attr/textAppearanceLabelMedium"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -183,7 +183,7 @@
                             android:layout_weight="1"
                             android:checkable="true"
                             android:checked="true"
-                            android:text="Merge" />
+                            android:text="@string/btn_conflict_merge" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnConflictReplace"
@@ -191,7 +191,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checkable="true"
-                            android:text="Replace" />
+                            android:text="@string/btn_conflict_replace" />
 
                     </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -199,7 +199,7 @@
                         android:id="@+id/btnImport"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Import from JSON"
+                        android:text="@string/btn_import"
                         app:icon="@drawable/ic_rounded_expand_circle_up_24" />
 
                 </LinearLayout>
@@ -224,13 +224,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:text="About backup files"
+                        android:text="@string/backup_info_title"
                         android:textAppearance="?attr/textAppearanceTitleMedium" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Exported files are saved as fola_backup_&lt;date&gt;.json. Merge adds new tasks without removing existing ones. Replace clears all current tasks before importing."
+                        android:text="@string/backup_info_desc"
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 

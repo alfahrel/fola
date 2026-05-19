@@ -16,7 +16,7 @@
             android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            app:title="Theme"
+            app:title="@string/title_theme"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:expandedTitleMarginStart="16dp"
             app:expandedTitleMarginBottom="16dp"
@@ -65,14 +65,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:text="Dark mode"
+                        android:text="@string/dark_mode_title"
                         android:textAppearance="?attr/textAppearanceTitleMedium" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
-                        android:text="Choose when to use dark colours"
+                        android:text="@string/dark_mode_desc"
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -90,7 +90,7 @@
                             android:layout_weight="1"
                             android:checkable="true"
                             android:checked="true"
-                            android:text="System" />
+                            android:text="@string/btn_system" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnLight"
@@ -98,7 +98,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checkable="true"
-                            android:text="Light" />
+                            android:text="@string/btn_light" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnDark"
@@ -106,7 +106,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checkable="true"
-                            android:text="Dark" />
+                            android:text="@string/btn_dark" />
 
                     </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -139,14 +139,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Dynamic color"
+                            android:text="@string/dynamic_color_title"
                             android:textAppearance="?attr/textAppearanceTitleMedium" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Match colors to your wallpaper. Falls back to yellow when off."
+                            android:text="@string/dynamic_color_desc"
                             android:textAppearance="?attr/textAppearanceBodySmall"
                             android:textColor="?attr/colorOnSurfaceVariant" />
 

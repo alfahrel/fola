@@ -14,7 +14,7 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="120dp"
-            app:title="Widget Settings"
+            app:title="@string/title_widget_settings"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:expandedTitleMarginStart="16dp"
             app:expandedTitleMarginBottom="16dp"
@@ -47,7 +47,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Filter"
+                android:text="@string/widget_config_section_filter"
                 android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp" />
@@ -58,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                android:hint="Date">
+                android:hint="@string/widget_config_hint_date">
 
                 <AutoCompleteTextView
                     android:id="@+id/actvConfigDateFilter"
@@ -74,7 +74,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Display"
+                android:text="@string/widget_config_section_display"
                 android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp" />
@@ -95,13 +95,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Show Completed Tasks"
+                        android:text="@string/widget_config_show_completed"
                         android:textAppearance="?attr/textAppearanceBodyLarge" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Show a section for finished tasks"
+                        android:text="@string/widget_config_show_completed_desc"
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         android:alpha="0.6" />
 
@@ -130,13 +130,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Show Category Label"
+                        android:text="@string/widget_config_show_category"
                         android:textAppearance="?attr/textAppearanceBodyLarge" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Show Task or Habit chip on each item"
+                        android:text="@string/widget_config_show_category_desc"
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         android:alpha="0.6" />
 
@@ -165,13 +165,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Show Date"
+                        android:text="@string/widget_config_show_date"
                         android:textAppearance="?attr/textAppearanceBodyLarge" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Show start and due date on each item"
+                        android:text="@string/widget_config_show_date_desc"
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         android:alpha="0.6" />
 
@@ -188,7 +188,7 @@
                 android:id="@+id/btnConfigSave"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Save" />
+                android:text="@string/btn_save" />
 
         </LinearLayout>
 

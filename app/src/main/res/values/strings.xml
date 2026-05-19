@@ -1,19 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Fola</string>
     <string name="widget_task_description">today\'s tasks at a glance</string>
     <string name="widget_calendar_description">calendar month</string>
+
+    <string name="filter_all">All</string>
+    <string name="filter_task">Task</string>
+    <string name="filter_habit">Habit</string>
+    <string name="filter_today">Today</string>
+    <string name="filter_tomorrow">Tomorrow</string>
+    <string name="filter_week">Week</string>
+    <string name="empty_title">No tasks yet</string>
+    <string name="empty_subtitle">Tap + to add one</string>
+    <string name="fab_add">Add</string>
+    <string name="fab_add_desc">Add</string>
+
+    <string name="title_theme">Theme</string>
+    <string name="dark_mode_title">Dark mode</string>
+    <string name="dark_mode_desc">Choose when to use dark colours</string>
+    <string name="btn_system">System</string>
+    <string name="btn_light">Light</string>
+    <string name="btn_dark">Dark</string>
+    <string name="dynamic_color_title">Dynamic color</string>
+    <string name="dynamic_color_desc">Match colors to your wallpaper. Falls back to yellow when off.</string>
+    <string name="dialog_enable_dynamic_color">Enable Dynamic Color</string>
+    <string name="dialog_disable_dynamic_color">Disable Dynamic Color</string>
+    <string name="dialog_dynamic_color_message">The app will restart to apply the new color theme. Continue?</string>
+    <string name="btn_restart">Restart</string>
+    <string name="btn_cancel">Cancel</string>
+
+    <string name="title_about">About</string>
+    <string name="about_app_name">Fola</string>
+    <string name="about_description">A simple and lightweight task manager for Android.</string>
+    <string name="about_source_title">Source code</string>
+    <string name="about_source_desc">Available on GitHub</string>
+    <string name="btn_view_on_github">View on GitHub</string>
+    <string name="about_license_title">License</string>
+    <string name="about_license_desc">GNU General Public License v3.0</string>
+    <string name="btn_view_license">View license</string>
+
+    <string name="title_export_import">Export &amp; Import</string>
+    <string name="export_title">Export tasks</string>
+    <string name="export_desc">Save your tasks to a JSON file on your device</string>
+    <string name="export_label_include">Include</string>
+    <string name="btn_export_all">All</string>
+    <string name="btn_export_active">Active</string>
+    <string name="btn_export_completed">Completed</string>
+    <string name="btn_export">Export to JSON</string>
+    <string name="import_title">Import tasks</string>
+    <string name="import_desc">Load tasks from a previously exported JSON file</string>
+    <string name="import_label_conflict">On conflict</string>
+    <string name="btn_conflict_merge">Merge</string>
+    <string name="btn_conflict_replace">Replace</string>
+    <string name="btn_import">Import from JSON</string>
+    <string name="backup_info_title">About backup files</string>
+    <string name="backup_info_desc">Exported files are saved as fola_backup_&lt;date&gt;.json. Merge adds new tasks without removing existing ones. Replace clears all current tasks before importing.</string>
+    <string name="export_success">Exported %d task(s) successfully</string>
+    <string name="export_failed">Export failed: %s</string>
+    <string name="import_failed">Import failed: %s</string>
+    <string name="import_confirm_title">Import %d task(s)?</string>
+    <string name="import_confirm_merge">This will merge with existing tasks. Continue?</string>
+    <string name="import_confirm_replace">This will replace all existing tasks. Continue?</string>
+    <string name="btn_import_confirm">Import</string>
+    <string name="import_success">Imported %d task(s) successfully</string>
+
+    <string name="title_language">Language</string>
+    <string name="language_title">App language</string>
+    <string name="language_desc">The app will restart to apply the selected language</string>
+    <string name="btn_lang_english">English</string>
+    <string name="btn_lang_indonesian">Indonesian</string>
+    <string name="dialog_change_language">Change language</string>
+    <string name="dialog_language_message">The app will restart to apply the new language. Continue?</string>
+
+    <string name="hint_title">Title</string>
+    <string name="btn_pick_start_date">Pick start date (optional)</string>
+    <string name="btn_pick_due_date">Pick due date (optional)</string>
+    <string name="btn_pick_habit_start_date">Pick start date (optional)</string>
+    <string name="btn_pick_habit_end_date">Pick end date (optional)</string>
+    <string name="label_repeat">Repeat</string>
+    <string name="btn_repeat_daily">Daily</string>
+    <string name="btn_repeat_weekly">Weekly</string>
+    <string name="btn_repeat_monthly">Monthly</string>
+    <string name="btn_repeat_custom">Custom</string>
+    <string name="label_every">Every</string>
+    <string name="btn_save">Save</string>
+
+    <string name="task_deleted">Task deleted</string>
+    <string name="btn_undo">Undo</string>
+
+    <string name="debug_midnight">Midnight worker triggered</string>
+    <string name="menu_debug_midnight">[Debug] Trigger Midnight</string>
+
+    <string name="menu_calendar">Calendar</string>
+    <string name="menu_theme">Theme</string>
+    <string name="menu_export_import">Export &amp; Import</string>
+    <string name="menu_about">About</string>
+    <string name="menu_language">Language</string>
+    <string name="calendar">Calendar</string>
+    <string name="open_calendar">Open Calendar</string>
+    <string name="theme">Theme</string>
+    <string name="open_theme">Open Theme</string>
+    <string name="export_amp_import"><![CDATA[Export & Import]]></string>
+    <string name="open_export_import">Open Export Import</string>
+    <string name="about">About</string>
+    <string name="open_about">Open About</string>
+    <string name="today">Today</string>
+
+    <string name="title_widget_settings">Widget Settings</string>
+    <string name="widget_config_section_filter">Filter</string>
+    <string name="widget_config_hint_date">Date</string>
+    <string name="widget_config_section_display">Display</string>
+    <string name="widget_config_show_completed">Show Completed Tasks</string>
+    <string name="widget_config_show_completed_desc">Show a section for finished tasks</string>
+    <string name="widget_config_show_category">Show Category Label</string>
+    <string name="widget_config_show_category_desc">Show Task or Habit chip on each item</string>
+    <string name="widget_config_show_date">Show Date</string>
+    <string name="widget_config_show_date_desc">Show start and due date on each item</string>
+
     <string-array name="month_names">
-        <item>Januari</item>
-        <item>Februari</item>
-        <item>Maret</item>
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
         <item>April</item>
-        <item>Mei</item>
-        <item>Juni</item>
-        <item>Juli</item>
-        <item>Agustus</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
         <item>September</item>
-        <item>Oktober</item>
+        <item>October</item>
         <item>November</item>
-        <item>Desember</item>
+        <item>December</item>
     </string-array>
 </resources>

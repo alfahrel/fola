@@ -4,7 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:paddingTop="0dp"
+    android:paddingBottom="0dp"
+    android:paddingHorizontal="24dp">
+
+    <View
+        android:layout_width="63dp"
+        android:layout_height="3dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_sheet_handle" />
 
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/categoryGroup"
@@ -21,7 +31,7 @@
             android:layout_weight="1"
             android:checkable="true"
             android:checked="true"
-            android:text="Task" />
+            android:text="@string/filter_task" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCatHabit"
@@ -29,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checkable="true"
-            android:text="Habit" />
+            android:text="@string/filter_habit" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -38,7 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:hint="Title"
+        android:hint="@string/hint_title"
         app:boxCornerRadiusBottomEnd="16dp"
         app:boxCornerRadiusBottomStart="16dp"
         app:boxCornerRadiusTopEnd="16dp"
@@ -63,7 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:text="Pick start date (optional)"
+            android:text="@string/btn_pick_start_date"
             app:icon="@drawable/ic_rounded_calendar_month_24" />
 
         <com.google.android.material.button.MaterialButton
@@ -72,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:text="Pick due date (optional)"
+            android:text="@string/btn_pick_due_date"
             app:icon="@drawable/ic_rounded_calendar_month_24" />
     </LinearLayout>
 
@@ -89,7 +99,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:text="Pick start date (optional)"
+            android:text="@string/btn_pick_habit_start_date"
             app:icon="@drawable/ic_rounded_calendar_month_24" />
 
         <com.google.android.material.button.MaterialButton
@@ -98,14 +108,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:text="Pick end date (optional)"
+            android:text="@string/btn_pick_habit_end_date"
             app:icon="@drawable/ic_rounded_calendar_month_24" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Repeat"
+            android:text="@string/label_repeat"
             android:textAppearance="?attr/textAppearanceLabelLarge"
             android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -124,7 +134,7 @@
                 android:layout_weight="1"
                 android:checkable="true"
                 android:checked="true"
-                android:text="Daily" />
+                android:text="@string/btn_repeat_daily" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRepeatWeekly"
@@ -132,7 +142,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checkable="true"
-                android:text="Weekly" />
+                android:text="@string/btn_repeat_weekly" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRepeatMonthly"
@@ -140,7 +150,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checkable="true"
-                android:text="Monthly" />
+                android:text="@string/btn_repeat_monthly" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRepeatCustom"
@@ -148,7 +158,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checkable="true"
-                android:text="Custom" />
+                android:text="@string/btn_repeat_custom" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <LinearLayout
@@ -164,7 +174,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
-                android:text="Every"
+                android:text="@string/label_every"
                 android:textAppearance="?attr/textAppearanceBodyLarge" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -215,7 +225,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginTop="8dp"
-        android:text="Save"
+        android:text="@string/btn_save"
         android:textSize="16sp"
         android:textStyle="bold" />
 </LinearLayout>

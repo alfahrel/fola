@@ -19,7 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Today"
+            android:text="@string/today"
             android:textSize="15sp"
             android:textStyle="bold"
             android:textColor="@color/widget_text_primary" />

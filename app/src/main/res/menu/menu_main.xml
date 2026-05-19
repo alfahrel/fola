@@ -5,22 +5,22 @@
     <item
         android:id="@+id/action_calendar"
         android:icon="@drawable/ic_rounded_calendar_month_24"
-        android:title="Calendar"
-        android:contentDescription="Open Calendar"
+        android:title="@string/calendar"
+        android:contentDescription="@string/open_calendar"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_theme"
         android:icon="@drawable/ic_rounded_format_paint_24"
-        android:title="Theme"
-        android:contentDescription="Open Theme"
+        android:title="@string/theme"
+        android:contentDescription="@string/open_theme"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_export_import"
         android:icon="@drawable/ic_rounded_file_export_24"
-        android:title="Export &amp; Import"
-        android:contentDescription="Open Export Import"
+        android:title="@string/export_amp_import"
+        android:contentDescription="@string/open_export_import"
         app:showAsAction="never" />
 
     <item
@@ -33,8 +33,8 @@
     <item
         android:id="@+id/action_about"
         android:icon="@drawable/ic_rounded_info_i_24"
-        android:title="About"
-        android:contentDescription="Open About"
+        android:title="@string/about"
+        android:contentDescription="@string/open_about"
         app:showAsAction="never" />
 
 <!--    <item-->
