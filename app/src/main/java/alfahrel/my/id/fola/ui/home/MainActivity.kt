@@ -7,9 +7,14 @@ import alfahrel.my.id.fola.ui.theme.ThemeActivity
 import alfahrel.my.id.fola.data.model.Task
 import alfahrel.my.id.fola.data.repository.AppDatabase
 import alfahrel.my.id.fola.data.repository.AppRepository
+import alfahrel.my.id.fola.service.MidnightWorker
+import alfahrel.my.id.fola.ui.about.AboutActivity
+import alfahrel.my.id.fola.ui.exportimport.ExportImportActivity
+import alfahrel.my.id.fola.ui.language.LanguageActivity
 import alfahrel.my.id.fola.ui.task.TaskAdapter
 import alfahrel.my.id.fola.ui.sheet.AddSheet
 import alfahrel.my.id.fola.ui.sheet.EditSheet
+import alfahrel.my.id.fola.util.FilterPrefs
 import alfahrel.my.id.fola.widget.TaskWidgetProvider
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
@@ -18,15 +23,15 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.button.MaterialButton
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -54,8 +59,8 @@ class MainActivity : BaseActivity() {
 
         setupToolbar()
         setupRecyclerView()
-        setupCategoryFilter()
         setupDateFilter()
+        setupCategoryFilter()
         setupFab()
         observeData()
 
@@ -86,8 +91,30 @@ class MainActivity : BaseActivity() {
                 startActivity(Intent(this, ThemeActivity::class.java))
                 true
             }
+            R.id.action_export_import -> {
+                startActivity(Intent(this, ExportImportActivity::class.java))
+                true
+            }
+            R.id.action_language -> {
+                startActivity(Intent(this, LanguageActivity::class.java))
+                true
+            }
+            R.id.action_about -> {
+                startActivity(Intent(this, AboutActivity::class.java))
+                true
+            }
+//            R.id.action_debug_midnight -> {
+//                triggerMidnightWorker()
+//                true
+//            }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun triggerMidnightWorker() {
+        val request = OneTimeWorkRequestBuilder<MidnightWorker>().build()
+        WorkManager.getInstance(this).enqueue(request)
+        Toast.makeText(this, "Midnight worker triggered", Toast.LENGTH_SHORT).show()
     }
 
     private fun setupToolbar() {
@@ -114,49 +141,54 @@ class MainActivity : BaseActivity() {
         taskAdapter.attachSwipeToDelete(recyclerView)
     }
 
-    private fun setupCategoryFilter() {
-        val categoryGroup = findViewById<MaterialButtonToggleGroup>(R.id.categoryGroup)
-        val btnCatAll = findViewById<MaterialButton>(R.id.btnCatAll)
-        val btnCatTask = findViewById<MaterialButton>(R.id.btnCatTask)
-        val btnCatHabit = findViewById<MaterialButton>(R.id.btnCatHabit)
+    private fun setupDateFilter() {
+        val group = findViewById<MaterialButtonToggleGroup>(R.id.dateGroup)
 
-        val filterMap = mapOf(
-            R.id.btnCatAll to null,
-            R.id.btnCatTask to "Task",
-            R.id.btnCatHabit to "Habit"
-        )
+        val savedDate = FilterPrefs.loadDateFilter(this)
+        val dateButtonId = when (savedDate) {
+            0    -> R.id.btnDateToday
+            1    -> R.id.btnDateTomorrow
+            7    -> R.id.btnDateWeek
+            else -> R.id.btnDateAll
+        }
+        group.check(dateButtonId)
+        taskAdapter.setDateFilter(savedDate)
 
-        categoryGroup.check(R.id.btnCatAll)
-        categoryGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+        group.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (!isChecked) return@addOnButtonCheckedListener
-            taskAdapter.setFilter(filterMap[checkedId])
+            val daysAhead = when (checkedId) {
+                R.id.btnDateToday    -> 0
+                R.id.btnDateTomorrow -> 1
+                R.id.btnDateWeek     -> 7
+                else                 -> null
+            }
+            FilterPrefs.saveDateFilter(this, daysAhead)
+            taskAdapter.setDateFilter(daysAhead)
             updateEmptyState()
         }
     }
 
-    private fun setupDateFilter() {
-        val autoCompleteTextView = findViewById<AutoCompleteTextView>(R.id.actvDateFilter)
+    private fun setupCategoryFilter() {
+        val group = findViewById<MaterialButtonToggleGroup>(R.id.categoryGroup)
 
-        val dateFilters = listOf(
-            "All" to null,
-            "Today" to 0,
-            "Tomorrow" to 1,
-            "This Week" to 7
-        )
+        val savedCategory = FilterPrefs.loadCategoryFilter(this)
+        val catButtonId = when (savedCategory) {
+            "Task"  -> R.id.btnCatTask
+            "Habit" -> R.id.btnCatHabit
+            else    -> R.id.btnCatAll
+        }
+        group.check(catButtonId)
+        taskAdapter.setFilter(savedCategory)
 
-        val adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_dropdown_item_1line,
-            dateFilters.map { it.first }
-        )
-        autoCompleteTextView.setAdapter(adapter)
-
-        autoCompleteTextView.setText("All", false)
-        taskAdapter.setDateFilter(null)
-
-        autoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
-            val selectedFilter = dateFilters[position].second
-            taskAdapter.setDateFilter(selectedFilter)
+        group.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            val category = when (checkedId) {
+                R.id.btnCatTask  -> "Task"
+                R.id.btnCatHabit -> "Habit"
+                else             -> null
+            }
+            FilterPrefs.saveCategoryFilter(this, category)
+            taskAdapter.setFilter(category)
             updateEmptyState()
         }
     }
@@ -227,6 +259,6 @@ class MainActivity : BaseActivity() {
     private fun notifyWidget() {
         val manager = AppWidgetManager.getInstance(this)
         val ids = manager.getAppWidgetIds(ComponentName(this, TaskWidgetProvider::class.java))
-        ids.forEach { TaskWidgetProvider.Companion.updateWidget(this, manager, it) }
+        ids.forEach { TaskWidgetProvider.updateWidget(this, manager, it) }
     }
 }

@@ -5,8 +5,8 @@ import alfahrel.my.id.fola.data.model.Task
 import alfahrel.my.id.fola.data.repository.AppDatabase
 import alfahrel.my.id.fola.widget.TaskWidgetProvider
 import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -23,7 +23,7 @@ class MidnightWorker(context: Context, params: WorkerParameters) : Worker(contex
 
         val manager = AppWidgetManager.getInstance(applicationContext)
         val ids = manager.getAppWidgetIds(
-            android.content.ComponentName(applicationContext, TaskWidgetProvider::class.java)
+            ComponentName(applicationContext, TaskWidgetProvider::class.java)
         )
         ids.forEach { TaskWidgetProvider.updateWidget(applicationContext, manager, it) }
 
@@ -32,7 +32,6 @@ class MidnightWorker(context: Context, params: WorkerParameters) : Worker(contex
 
     private fun processRepeatTasks() {
         val dao = AppDatabase.getInstance(applicationContext).taskDao()
-        val now = System.currentTimeMillis()
 
         val startOfToday = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
@@ -41,11 +40,10 @@ class MidnightWorker(context: Context, params: WorkerParameters) : Worker(contex
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
 
-        // Handle completed repeat tasks — reset them for next occurrence
         dao.getAllCompletedTasksSync()
             .filter { it.isRepeat }
             .forEach { task ->
-                val nextDue = advanceDueDate(task)
+                val nextDue = advanceToNextOccurrence(task, startOfToday)
                 dao.updateSync(
                     task.copy(
                         isCompleted = false,
@@ -55,36 +53,20 @@ class MidnightWorker(context: Context, params: WorkerParameters) : Worker(contex
                 )
             }
 
-        // Handle missed repeat tasks (not completed, due date has passed)
-        // Reset streak to 0 and advance due date so it shows for today
         dao.getAllActiveTasksSync()
             .filter { it.isRepeat && it.dueDateMs != null && it.dueDateMs < startOfToday }
             .forEach { task ->
-                val nextDue = advanceToToday(task, startOfToday)
+                val nextDue = advanceToNextOccurrence(task, startOfToday)
                 dao.updateSync(
                     task.copy(
                         dueDateMs = nextDue,
-                        streak    = 0           // missed = streak broken
+                        streak    = 0
                     )
                 )
             }
     }
 
-    private fun advanceDueDate(task: Task): Long {
-        val base = task.dueDateMs ?: System.currentTimeMillis()
-        val cal  = Calendar.getInstance().apply { timeInMillis = base }
-
-        when (task.repeatType) {
-            RepeatType.DAILY   -> cal.add(Calendar.DAY_OF_MONTH, task.repeatInterval)
-            RepeatType.WEEKLY  -> cal.add(Calendar.WEEK_OF_YEAR, task.repeatInterval)
-            RepeatType.MONTHLY -> cal.add(Calendar.MONTH,        task.repeatInterval)
-            RepeatType.CUSTOM  -> cal.add(Calendar.DAY_OF_MONTH, task.repeatInterval)
-        }
-
-        return cal.timeInMillis
-    }
-
-    private fun advanceToToday(task: Task, startOfToday: Long): Long {
+    private fun advanceToNextOccurrence(task: Task, startOfToday: Long): Long {
         var next = task.dueDateMs ?: startOfToday
         while (next < startOfToday) {
             val cal = Calendar.getInstance().apply { timeInMillis = next }
@@ -96,7 +78,15 @@ class MidnightWorker(context: Context, params: WorkerParameters) : Worker(contex
             }
             next = cal.timeInMillis
         }
-        return next
+        if (next == startOfToday) return next
+        val cal = Calendar.getInstance().apply { timeInMillis = next }
+        when (task.repeatType) {
+            RepeatType.DAILY   -> cal.add(Calendar.DAY_OF_MONTH, task.repeatInterval)
+            RepeatType.WEEKLY  -> cal.add(Calendar.WEEK_OF_YEAR, task.repeatInterval)
+            RepeatType.MONTHLY -> cal.add(Calendar.MONTH,        task.repeatInterval)
+            RepeatType.CUSTOM  -> cal.add(Calendar.DAY_OF_MONTH, task.repeatInterval)
+        }
+        return cal.timeInMillis
     }
 
     companion object {
@@ -118,7 +108,7 @@ class MidnightWorker(context: Context, params: WorkerParameters) : Worker(contex
                 .setInitialDelay(delay, TimeUnit.MILLISECONDS)
                 .build()
 
-            WorkManager.Companion.getInstance(context).enqueueUniqueWork(
+            WorkManager.getInstance(context).enqueueUniqueWork(
                 WORK_NAME,
                 ExistingWorkPolicy.REPLACE,
                 request

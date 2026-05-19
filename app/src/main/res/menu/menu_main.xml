@@ -14,6 +14,32 @@
         android:icon="@drawable/ic_rounded_format_paint_24"
         android:title="Theme"
         android:contentDescription="Open Theme"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_export_import"
+        android:icon="@drawable/ic_rounded_file_export_24"
+        android:title="Export &amp; Import"
+        android:contentDescription="Open Export Import"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_language"
+        android:icon="@drawable/ic_rounded_language_24"
+        android:title="Language"
+        android:contentDescription="Open Language"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_about"
+        android:icon="@drawable/ic_rounded_info_i_24"
+        android:title="About"
+        android:contentDescription="Open About"
+        app:showAsAction="never" />
+
+<!--    <item-->
+<!--        android:id="@+id/action_debug_midnight"-->
+<!--        android:title="[Debug] Trigger Midnight"-->
+<!--        app:showAsAction="never" />-->
 
 </menu>

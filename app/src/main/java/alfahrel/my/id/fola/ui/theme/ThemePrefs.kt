@@ -11,7 +11,7 @@ object ThemePrefs {
 
     fun getMode(ctx: Context): Int {
         return ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .getInt(KEY_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            .getInt(KEY_MODE, AppCompatDelegate.MODE_NIGHT_NO)
     }
 
     fun setMode(ctx: Context, mode: Int) {
@@ -21,7 +21,7 @@ object ThemePrefs {
 
     fun isDynamicColor(ctx: Context): Boolean {
         return ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .getBoolean(KEY_DYNAMIC_COLOR, true)
+            .getBoolean(KEY_DYNAMIC_COLOR, false)
     }
 
     fun setDynamicColor(ctx: Context, enabled: Boolean) {

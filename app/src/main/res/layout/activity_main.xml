@@ -46,31 +46,13 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilDateFilter"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:hint="Date">
-
-                <AutoCompleteTextView
-                    android:id="@+id/actvDateFilter"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:focusable="false"
-                    android:text="All"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp" />
-            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/categoryGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:singleSelection="true"
-                android:layout_marginBottom="6dp"
+                android:layout_marginBottom="0dp"
                 app:selectionRequired="true">
 
                 <com.google.android.material.button.MaterialButton
@@ -99,6 +81,48 @@
                     android:text="Habit" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/dateGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDateAll"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checkable="true"
+                    android:checked="true"
+                    android:text="All" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDateToday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checkable="true"
+                    android:text="Today" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDateTomorrow"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checkable="true"
+                    android:text="Tomorrow" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDateWeek"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checkable="true"
+                    android:text="Week" />
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
 
 
             <LinearLayout

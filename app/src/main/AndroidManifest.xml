@@ -31,6 +31,24 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
+            android:name=".ui.exportimport.ExportImportActivity"
+            android:exported="false"
+            android:theme="@style/Base.Theme.Fola"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.language.LanguageActivity"
+            android:exported="false"
+            android:theme="@style/Base.Theme.Fola"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.about.AboutActivity"
+            android:exported="false"
+            android:theme="@style/Base.Theme.Fola"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".widget.TaskWidgetConfigActivity"
             android:exported="true"
             android:theme="@style/Base.Theme.Fola">
