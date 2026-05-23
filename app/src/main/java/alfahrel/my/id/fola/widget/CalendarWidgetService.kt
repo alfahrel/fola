@@ -6,6 +6,7 @@ import android.content.Intent
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import alfahrel.my.id.fola.R
+import alfahrel.my.id.fola.data.repository.AppDatabase
 import alfahrel.my.id.fola.ui.calendar.HolidayType
 import alfahrel.my.id.fola.ui.calendar.HolidaysData
 import java.util.Calendar
@@ -42,16 +43,17 @@ class CalendarWidgetFactory(
         month = cal.get(Calendar.MONTH)
     }
 
-    override fun onCreate() { refreshYearMonth(); load() }
+    override fun onCreate()         { refreshYearMonth(); load() }
     override fun onDataSetChanged() { refreshYearMonth(); load() }
-    override fun onDestroy() {}
+    override fun onDestroy()        {}
 
     private fun load() {
         cells.clear()
-        val holidays    = HolidaysData.allHolidays
-        val tmpCal      = Calendar.getInstance().apply { set(year, month, 1) }
-        val today       = Calendar.getInstance()
-        var firstDow    = tmpCal.get(Calendar.DAY_OF_WEEK) - 1
+        val holidays = HolidaysData.allHolidays
+        val tmpCal   = Calendar.getInstance().apply { set(year, month, 1) }
+        val today    = Calendar.getInstance()
+
+        var firstDow = tmpCal.get(Calendar.DAY_OF_WEEK) - 1
         if (firstDow < 0) firstDow = 6
 
         if (firstDow > 0) {
@@ -115,11 +117,14 @@ class CalendarWidgetFactory(
             }
         } else {
             when {
-                cell.isToday      -> R.layout.widget_day_cell_today
-                cell.isJointLeave -> R.layout.widget_day_cell_joint_leave
-                cell.isHoliday    -> R.layout.widget_day_cell_holiday
-                cell.isSunday     -> R.layout.widget_day_cell_sunday
-                else              -> R.layout.widget_day_cell_normal
+                cell.isToday && cell.isJointLeave -> R.layout.widget_day_cell_joint_leave
+                cell.isToday && cell.isHoliday    -> R.layout.widget_day_cell_holiday
+                cell.isToday && cell.isSunday     -> R.layout.widget_day_cell_sunday
+                cell.isToday                      -> R.layout.widget_day_cell_today
+                cell.isJointLeave                 -> R.layout.widget_day_cell_joint_leave
+                cell.isHoliday                    -> R.layout.widget_day_cell_holiday
+                cell.isSunday                     -> R.layout.widget_day_cell_sunday
+                else                              -> R.layout.widget_day_cell_normal
             }
         }
 

@@ -42,14 +42,43 @@ class CalendarAdapter(
         }
 
         if (item.isTrailing) {
-            h.tvDay.background = null
-            h.tvDay.alpha      = 0.4f
-            h.tvDay.setTextColor(
-                when {
-                    item.isHoliday || item.isSunday -> ctx.resolveAttrColor(MatR.attr.colorErrorContainer)
-                    else -> ctx.resolveAttrColor(MatR.attr.colorOnSurface)
+            h.tvDay.alpha = 0.4f
+            val isJoint   = item.holidayType == HolidayType.JOINT_LEAVE
+            val isHoliday = item.isHoliday && !isJoint
+            when {
+                item.isSunday && item.hasTask -> {
+                    h.tvDay.setBackgroundResource(R.drawable.bg_sunday_task)
+                    h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnError))
                 }
-            )
+                item.isSunday -> {
+                    h.tvDay.setBackgroundResource(R.drawable.bg_sunday)
+                    h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnError))
+                }
+                isJoint && item.hasTask -> {
+                    h.tvDay.setBackgroundResource(R.drawable.bg_joint_task)
+                    h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnErrorContainer))
+                }
+                isJoint -> {
+                    h.tvDay.setBackgroundResource(R.drawable.bg_joint)
+                    h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnErrorContainer))
+                }
+                isHoliday && item.hasTask -> {
+                    h.tvDay.setBackgroundResource(R.drawable.bg_holiday_task)
+                    h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnError))
+                }
+                isHoliday -> {
+                    h.tvDay.setBackgroundResource(R.drawable.bg_holiday)
+                    h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnError))
+                }
+                item.hasTask -> {
+                    h.tvDay.setBackgroundResource(R.drawable.bg_task)
+                    h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorPrimaryVariant))
+                }
+                else -> {
+                    h.tvDay.background = null
+                    h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnSurface))
+                }
+            }
             return
         }
 

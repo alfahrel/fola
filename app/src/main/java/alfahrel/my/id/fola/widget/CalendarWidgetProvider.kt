@@ -12,6 +12,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.view.View
 import android.widget.RemoteViews
 import java.util.Calendar
 
@@ -24,6 +25,7 @@ class CalendarWidgetProvider : AppWidgetProvider() {
         const val ACTION_MIDNIGHT_UPDATE = "alfahrel.my.id.fola.CALENDAR_WIDGET_MIDNIGHT_UPDATE"
         const val EXTRA_WIDGET = "widget_id"
         private const val MIDNIGHT_ALARM_REQUEST_CODE = 998
+        private const val HOLIDAY_DATA_YEAR = 2026
 
         fun scheduleMidnightAlarm(ctx: Context) {
             val alarmManager = ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -66,12 +68,7 @@ class CalendarWidgetProvider : AppWidgetProvider() {
             Intent.ACTION_TIMEZONE_CHANGED,
             ACTION_MIDNIGHT_UPDATE -> {
                 val mgr = AppWidgetManager.getInstance(ctx)
-                val ids = mgr.getAppWidgetIds(
-                    ComponentName(
-                        ctx,
-                        CalendarWidgetProvider::class.java
-                    )
-                )
+                val ids = mgr.getAppWidgetIds(ComponentName(ctx, CalendarWidgetProvider::class.java))
                 ids.forEach { updateWidget(ctx, mgr, it) }
                 scheduleMidnightAlarm(ctx)
                 return
@@ -87,6 +84,12 @@ class CalendarWidgetProvider : AppWidgetProvider() {
             ACTION_NEXT -> current + 1
             else        -> current
         }
+
+        val targetCal  = Calendar.getInstance().apply { add(Calendar.MONTH, newOffset) }
+        val targetYear = targetCal.get(Calendar.YEAR)
+
+        if (targetYear != HOLIDAY_DATA_YEAR) return
+
         setOffset(ctx, widgetId, newOffset)
         updateWidget(ctx, AppWidgetManager.getInstance(ctx), widgetId)
     }
@@ -99,12 +102,11 @@ class CalendarWidgetProvider : AppWidgetProvider() {
     }
 
     private fun updateWidget(ctx: Context, mgr: AppWidgetManager, widgetId: Int) {
-        val offset = getOffset(ctx, widgetId)
-        val cal    = Calendar.getInstance().apply { add(Calendar.MONTH, offset) }
-        val year   = cal.get(Calendar.YEAR)
-        val month  = cal.get(Calendar.MONTH)
-        val today  = Calendar.getInstance()
-        val stamp  = System.currentTimeMillis()
+        val offset     = getOffset(ctx, widgetId)
+        val cal        = Calendar.getInstance().apply { add(Calendar.MONTH, offset) }
+        val year       = cal.get(Calendar.YEAR)
+        val month      = cal.get(Calendar.MONTH)
+        val stamp      = System.currentTimeMillis()
 
         val monthNames    = ctx.resources.getStringArray(R.array.month_names)
         val monthYearText = "${monthNames[month]} $year"
@@ -112,8 +114,27 @@ class CalendarWidgetProvider : AppWidgetProvider() {
         val views = RemoteViews(ctx.packageName, R.layout.widget_calendar)
 
         views.setTextViewText(R.id.widget_tv_month_year, monthYearText)
-        views.setOnClickPendingIntent(R.id.widget_btn_prev, buildIntent(ctx, widgetId, ACTION_PREV))
-        views.setOnClickPendingIntent(R.id.widget_btn_next, buildIntent(ctx, widgetId, ACTION_NEXT))
+
+        val prevCal  = Calendar.getInstance().apply { add(Calendar.MONTH, offset - 1) }
+        val nextCal  = Calendar.getInstance().apply { add(Calendar.MONTH, offset + 1) }
+        val canPrev  = prevCal.get(Calendar.YEAR) == HOLIDAY_DATA_YEAR
+        val canNext  = nextCal.get(Calendar.YEAR) == HOLIDAY_DATA_YEAR
+
+        if (canPrev) {
+            views.setInt(R.id.widget_btn_prev, "setAlpha", 255)
+            views.setOnClickPendingIntent(R.id.widget_btn_prev, buildIntent(ctx, widgetId, ACTION_PREV))
+        } else {
+            views.setInt(R.id.widget_btn_prev, "setAlpha", 60)
+            views.setOnClickPendingIntent(R.id.widget_btn_prev, null)
+        }
+
+        if (canNext) {
+            views.setInt(R.id.widget_btn_next, "setAlpha", 255)
+            views.setOnClickPendingIntent(R.id.widget_btn_next, buildIntent(ctx, widgetId, ACTION_NEXT))
+        } else {
+            views.setInt(R.id.widget_btn_next, "setAlpha", 60)
+            views.setOnClickPendingIntent(R.id.widget_btn_next, null)
+        }
 
         val openApp = PendingIntent.getActivity(
             ctx,

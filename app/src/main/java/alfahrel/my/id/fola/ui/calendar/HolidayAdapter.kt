@@ -2,6 +2,8 @@ package alfahrel.my.id.fola.ui.calendar
 
 import android.animation.Animator
 import android.animation.ValueAnimator
+import android.content.Context
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +13,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import alfahrel.my.id.fola.R
 import alfahrel.my.id.fola.data.model.Task
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.R as MatR
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -27,6 +31,7 @@ class HolidayAdapter(private val events: List<DayEvent>) :
     private val expandedPositions = mutableSetOf<Int>()
 
     inner class EventVH(view: View) : RecyclerView.ViewHolder(view) {
+        val card: MaterialCardView        = view as MaterialCardView
         val tvDate: TextView              = view.findViewById(R.id.tvHolidayDate)
         val tvName: TextView              = view.findViewById(R.id.tvHolidayName)
         val tvDesc: TextView              = view.findViewById(R.id.tvHolidayDesc)
@@ -41,22 +46,46 @@ class HolidayAdapter(private val events: List<DayEvent>) :
     override fun getItemCount() = events.size
 
     override fun onBindViewHolder(h: EventVH, position: Int) {
-        val monthNames = listOf("","Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des")
-        val dateFmt    = SimpleDateFormat("d", Locale.getDefault())
-        val monthFmt   = SimpleDateFormat("M", Locale.getDefault())
+        val ctx        = h.itemView.context
+        val monthShort = ctx.resources.getStringArray(R.array.month_names_short)
 
         when (val event = events[position]) {
             is DayEvent.Holiday -> {
-                h.tvDate.text = "${event.info.day} ${monthNames[event.info.month]}"
+                h.tvDate.text = "${event.info.day} ${monthShort[event.info.month - 1]}"
                 h.tvName.text = event.info.name
                 h.tvDesc.text = event.info.description
                 h.tvEllipsis.visibility = View.VISIBLE
+
+                when (event.info.type) {
+                    HolidayType.JOINT_LEAVE -> {
+                        h.card.setCardBackgroundColor(ctx.resolveAttrColor(MatR.attr.colorOnError))
+                        h.tvDate.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnErrorContainer))
+                        h.tvName.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnErrorContainer))
+                        h.tvDesc.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnErrorContainer))
+                        h.tvEllipsis.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnErrorContainer))
+                    }
+                    HolidayType.NATIONAL,
+                    HolidayType.RELIGIOUS -> {
+                        h.card.setCardBackgroundColor(ctx.resolveAttrColor(MatR.attr.colorErrorContainer))
+                        h.tvDate.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnErrorContainer))
+                        h.tvName.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnErrorContainer))
+                        h.tvDesc.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnErrorContainer))
+                        h.tvEllipsis.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnErrorContainer))
+                    }
+                }
             }
             is DayEvent.TaskEvent -> {
+                h.card.setCardBackgroundColor(ctx.resolveAttrColor(MatR.attr.colorSurfaceContainerHigh))
+                h.tvDate.setTextColor(ctx.resolveAttrColor(MatR.attr.colorPrimaryVariant))
+                h.tvName.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnSurface))
+                h.tvDesc.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnSurfaceVariant))
+                h.tvEllipsis.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnSurfaceVariant))
+
                 val date      = Date(event.dateMs)
-                val day       = dateFmt.format(date).toIntOrNull() ?: 0
-                val month     = monthFmt.format(date).toIntOrNull() ?: 0
-                h.tvDate.text = "$day ${monthNames[month]}"
+                val cal       = java.util.Calendar.getInstance().apply { time = date }
+                val day       = cal.get(java.util.Calendar.DAY_OF_MONTH)
+                val month     = cal.get(java.util.Calendar.MONTH)
+                h.tvDate.text = "$day ${monthShort[month]}"
                 h.tvName.text = event.task.title
 
                 val fmt       = SimpleDateFormat("MMM d", Locale.getDefault())
@@ -160,4 +189,10 @@ class HolidayAdapter(private val events: List<DayEvent>) :
         h.itemView.alpha        = 1f
         h.itemView.translationY = 0f
     }
+}
+
+private fun Context.resolveAttrColor(attr: Int): Int {
+    val tv = TypedValue()
+    theme.resolveAttribute(attr, tv, true)
+    return tv.data
 }

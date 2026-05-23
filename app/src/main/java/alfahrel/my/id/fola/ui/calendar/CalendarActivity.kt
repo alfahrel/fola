@@ -10,6 +10,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -23,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,7 +36,11 @@ import java.util.Date
 class CalendarActivity : BaseActivity() {
 
     companion object {
-        const val START_POSITION = 1200
+        const val START_POSITION            = 1200
+        private const val HOLIDAY_DATA_YEAR = 2026
+        private const val PREFS_NAME        = "calendar_prefs"
+        private const val KEY_SHOW_HOLIDAYS = "show_holidays"
+        private const val KEY_SHOW_TASKS    = "show_tasks"
     }
 
     private lateinit var toolbar: Toolbar
@@ -46,6 +53,13 @@ class CalendarActivity : BaseActivity() {
     private lateinit var tvNoHoliday: LinearLayout
     private lateinit var fabCurrentMonth: FloatingActionButton
     private lateinit var rootLayout: NestedScrollView
+
+    private var showHolidays: Boolean = false
+    private var showTasks: Boolean    = true
+    private var menuItemToggle: MenuItem? = null
+    private var menuItemTasks: MenuItem?  = null
+
+    private val prefs by lazy { getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE) }
 
     private val dateChangeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -63,6 +77,9 @@ class CalendarActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_calendar)
+
+        showHolidays = prefs.getBoolean(KEY_SHOW_HOLIDAYS, false)
+        showTasks    = prefs.getBoolean(KEY_SHOW_TASKS, true)
 
         toolbar           = findViewById(R.id.toolbar)
         collapsingToolbar = findViewById(R.id.collapsingToolbar)
@@ -97,16 +114,83 @@ class CalendarActivity : BaseActivity() {
                 val cal   = pageToCalendar(position)
                 val year  = cal.get(Calendar.YEAR)
                 val month = cal.get(Calendar.MONTH)
+                if (year != HOLIDAY_DATA_YEAR) {
+                    showHolidayLimitDialog()
+                    return
+                }
                 updateMonthYear(year, month)
                 updateEvents(year, month)
             }
         })
 
-        btnPrev.setOnClickListener { viewPager.setCurrentItem(viewPager.currentItem - 1, true) }
-        btnNext.setOnClickListener { viewPager.setCurrentItem(viewPager.currentItem + 1, true) }
+        btnPrev.setOnClickListener {
+            val nextPos = viewPager.currentItem - 1
+            val cal     = pageToCalendar(nextPos)
+            if (cal.get(Calendar.YEAR) != HOLIDAY_DATA_YEAR) {
+                showHolidayLimitDialog()
+            } else {
+                viewPager.setCurrentItem(nextPos, true)
+            }
+        }
+        btnNext.setOnClickListener {
+            val nextPos = viewPager.currentItem + 1
+            val cal     = pageToCalendar(nextPos)
+            if (cal.get(Calendar.YEAR) != HOLIDAY_DATA_YEAR) {
+                showHolidayLimitDialog()
+            } else {
+                viewPager.setCurrentItem(nextPos, true)
+            }
+        }
         fabCurrentMonth.setOnClickListener { viewPager.setCurrentItem(START_POSITION, true) }
 
         MidnightWorker.Companion.scheduleMidnightWork(this)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_calendar, menu)
+        menuItemToggle = menu.findItem(R.id.action_toggle_holiday)
+        menuItemTasks  = menu.findItem(R.id.action_toggle_tasks)
+        menuItemToggle?.isChecked = showHolidays
+        menuItemTasks?.isChecked  = showTasks
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_toggle_holiday -> {
+                val newValue = !showHolidays
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(if (newValue) R.string.dialog_show_holiday_title_on else R.string.dialog_show_holiday_title_off)
+                    .setMessage(R.string.dialog_show_holiday_message)
+                    .setPositiveButton(R.string.dialog_show_holiday_btn_restart) { _, _ ->
+                        prefs.edit().putBoolean(KEY_SHOW_HOLIDAYS, newValue).apply()
+                        val intent = packageManager.getLaunchIntentForPackage(packageName)!!
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        startActivity(intent)
+                        finish()
+                    }
+                    .setNegativeButton(R.string.dialog_show_holiday_btn_cancel, null)
+                    .show()
+                true
+            }
+            R.id.action_toggle_tasks -> {
+                showTasks = !showTasks
+                item.isChecked = showTasks
+                prefs.edit().putBoolean(KEY_SHOW_TASKS, showTasks).apply()
+                val cal = pageToCalendar(viewPager.currentItem)
+                updateEvents(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH))
+                true
+            }
+            R.id.action_holiday_info -> {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.dialog_holiday_info_title)
+                    .setMessage(R.string.dialog_holiday_info_message)
+                    .setPositiveButton(R.string.dialog_holiday_info_btn, null)
+                    .show()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -134,7 +218,18 @@ class CalendarActivity : BaseActivity() {
         return Calendar.getInstance().apply { add(Calendar.MONTH, offset) }
     }
 
-    fun getCurrentHolidays() = HolidaysData.allHolidays
+    fun getCurrentHolidays() = if (showHolidays) HolidaysData.allHolidays else emptyMap()
+
+    private fun showHolidayLimitDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.dialog_holiday_data_title)
+            .setMessage(R.string.dialog_holiday_data_message)
+            .setPositiveButton(R.string.dialog_holiday_data_btn) { _, _ ->
+                viewPager.setCurrentItem(START_POSITION, true)
+            }
+            .setCancelable(false)
+            .show()
+    }
 
     private fun updateMonthYear(year: Int, month: Int) {
         val monthNames = resources.getStringArray(R.array.month_names)
@@ -154,13 +249,18 @@ class CalendarActivity : BaseActivity() {
                 set(year, month + 1, 1, 0, 0, 0)
                 set(Calendar.MILLISECOND, 0)
             }
-            val tasks = withContext(Dispatchers.IO) {
-                db.taskDao().getTasksForDay(startCal.timeInMillis, endCal.timeInMillis)
+
+            val tasks = if (showTasks) {
+                withContext(Dispatchers.IO) {
+                    db.taskDao().getTasksForDay(startCal.timeInMillis, endCal.timeInMillis)
+                }
+            } else {
+                emptyList()
             }
 
-            val holidays     = getHolidaysForMonth(year, month)
-            val events       = mutableListOf<DayEvent>()
-            val tmpCal       = Calendar.getInstance()
+            val holidays = getHolidaysForMonth(year, month)
+            val events   = mutableListOf<DayEvent>()
+            val tmpCal   = Calendar.getInstance()
 
             holidays.forEach { events.add(DayEvent.Holiday(it)) }
 
@@ -188,8 +288,8 @@ class CalendarActivity : BaseActivity() {
 
             withContext(Dispatchers.Main) {
                 if (events.isEmpty()) {
-                    rvHolidays.visibility  = View.GONE
-                    tvNoHoliday.visibility = View.VISIBLE
+                    rvHolidays.visibility    = View.GONE
+                    tvNoHoliday.visibility   = View.VISIBLE
                     tvNoHoliday.alpha        = 0f
                     tvNoHoliday.translationY = 40f
                     tvNoHoliday.animate().alpha(1f).translationY(0f).setDuration(300).setStartDelay(100).start()
@@ -203,6 +303,7 @@ class CalendarActivity : BaseActivity() {
     }
 
     private fun getHolidaysForMonth(year: Int, month: Int): List<HolidayInfo> {
+        if (!showHolidays || year != HOLIDAY_DATA_YEAR) return emptyList()
         val holidays = HolidaysData.allHolidays
         val result   = mutableListOf<HolidayInfo>()
         val tmpCal   = Calendar.getInstance().apply { set(year, month, 1) }

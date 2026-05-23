@@ -117,6 +117,18 @@
     <string name="widget_config_show_date">Show Date</string>
     <string name="widget_config_show_date_desc">Show start and due date on each item</string>
 
+    <string name="dialog_holiday_data_title">Holiday data limited to 2026</string>
+    <string name="dialog_holiday_data_message">Holiday information is only available for 2026 and indonesian. Other months will still show your tasks and habits.</string>
+    <string name="dialog_holiday_data_btn">Got it</string>
+
+    <string name="dialog_show_holiday_title_on">Show Holiday Dates</string>
+    <string name="dialog_show_holiday_title_off">Hide Holiday Dates</string>
+    <string name="dialog_show_holiday_message">The app will restart to apply this change. Continue?</string>
+    <string name="dialog_show_holiday_btn_restart">Restart</string>
+    <string name="dialog_show_holiday_btn_cancel">Cancel</string>
+    <string name="menu_show_tasks">Show Tasks</string>
+
+
     <string-array name="month_names">
         <item>January</item>
         <item>February</item>
@@ -131,4 +143,36 @@
         <item>November</item>
         <item>December</item>
     </string-array>
+
+    <string-array name="day_names_short">
+        <item>Sun</item>
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+    </string-array>
+
+    <string-array name="month_names_short">
+        <item>Jan</item>
+        <item>Feb</item>
+        <item>Mar</item>
+        <item>Apr</item>
+        <item>May</item>
+        <item>Jun</item>
+        <item>Jul</item>
+        <item>Aug</item>
+        <item>Sep</item>
+        <item>Oct</item>
+        <item>Nov</item>
+        <item>Dec</item>
+    </string-array>
+
+    <string name="menu_show_holidays">Show Holidays</string>
+    <string name="menu_holiday_info">About Holiday Data</string>
+    <string name="dialog_holiday_info_title">About Holiday Data</string>
+    <string name="dialog_holiday_info_message">Holiday data is bundled in the app for the year 2026 (Indonesian national holidays). To add holidays for other years, the app needs to be updated with new data. No-date tasks and repeating habits appear on every day from today onward.</string>
+    <string name="dialog_holiday_info_btn">OK</string>
+
 </resources>

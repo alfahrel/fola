@@ -21,6 +21,9 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
+        @Volatile
+        private var INSTANCE_MAIN_THREAD: AppDatabase? = null
+
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE tasks ADD COLUMN startDateMs INTEGER")
@@ -36,6 +39,19 @@ abstract class AppDatabase : RoomDatabase() {
                 )
                     .addMigrations(MIGRATION_1_2)
                     .build().also { INSTANCE = it }
+            }
+        }
+
+        fun getInstanceAllowMainThread(context: Context): AppDatabase {
+            return INSTANCE_MAIN_THREAD ?: synchronized(this) {
+                Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "fola_db"
+                )
+                    .addMigrations(MIGRATION_1_2)
+                    .allowMainThreadQueries()
+                    .build().also { INSTANCE_MAIN_THREAD = it }
             }
         }
     }

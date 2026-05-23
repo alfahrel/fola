@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_toggle_holiday"
+        android:title="@string/menu_show_holidays"
+        android:checkable="true"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_toggle_tasks"
+        android:title="@string/menu_show_tasks"
+        android:checkable="true"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_holiday_info"
+        android:icon="@drawable/ic_rounded_info_i_24"
+        android:title="@string/menu_holiday_info"
+        app:showAsAction="never" />
+</menu>

@@ -100,8 +100,8 @@
     <string name="open_calendar">Buka Kalendar</string>
     <string name="theme">Tema</string>
     <string name="open_theme">Buka Tema</string>
-    <string name="export_amp_import"><![CDATA[Export & Import]]></string>
-    <string name="open_export_import">Buka Export Import</string>
+    <string name="export_amp_import"><![CDATA[Ekspor &amp; Impor]]></string>
+    <string name="open_export_import">Buka Ekspor Impor</string>
     <string name="about">Tentang</string>
     <string name="open_about">Buka Tentang</string>
     <string name="today">Hari ini</string>
@@ -117,6 +117,18 @@
     <string name="widget_config_show_date">Tampilkan Tanggal</string>
     <string name="widget_config_show_date_desc">Tampilkan tanggal mulai dan tenggat pada setiap item</string>
 
+    <string name="dialog_holiday_data_title">Data hari libur terbatas untuk 2026</string>
+    <string name="dialog_holiday_data_message">Informasi hari libur hanya tersedia untuk tahun 2026 dan untuk indonesia. Bulan lain tetap menampilkan tugas dan kebiasaan Anda.</string>
+    <string name="dialog_holiday_data_btn">Mengerti</string>
+
+    <string name="dialog_show_holiday_title_on">Show Holiday Dates</string>
+    <string name="dialog_show_holiday_title_off">Hide Holiday Dates</string>
+    <string name="dialog_show_holiday_message">The app will restart to apply this change. Continue?</string>
+    <string name="dialog_show_holiday_btn_restart">Restart</string>
+    <string name="dialog_show_holiday_btn_cancel">Cancel</string>
+
+    <string name="menu_show_tasks">Show Tasks</string>
+
     <string-array name="month_names">
         <item>Januari</item>
         <item>Februari</item>
@@ -131,4 +143,36 @@
         <item>November</item>
         <item>Desember</item>
     </string-array>
+
+    <string-array name="day_names_short">
+        <item>Min</item>
+        <item>Sen</item>
+        <item>Sel</item>
+        <item>Rab</item>
+        <item>Kam</item>
+        <item>Jum</item>
+        <item>Sab</item>
+    </string-array>
+
+    <string-array name="month_names_short">
+        <item>Jan</item>
+        <item>Feb</item>
+        <item>Mar</item>
+        <item>Apr</item>
+        <item>Mei</item>
+        <item>Jun</item>
+        <item>Jul</item>
+        <item>Agu</item>
+        <item>Sep</item>
+        <item>Okt</item>
+        <item>Nov</item>
+        <item>Des</item>
+    </string-array>
+
+    <string name="menu_show_holidays">Tampilkan Hari Libur</string>
+    <string name="menu_holiday_info">Tentang Data Hari Libur</string>
+    <string name="dialog_holiday_info_title">Tentang Data Hari Libur</string>
+    <string name="dialog_holiday_info_message">Data hari libur sudah tersedia di dalam aplikasi untuk tahun 2026 (hari libur nasional Indonesia). Untuk menambahkan hari libur tahun lain, aplikasi perlu diperbarui dengan data baru. Tugas tanpa tanggal dan kebiasaan berulang muncul setiap hari mulai hari ini.</string>
+    <string name="dialog_holiday_info_btn">OK</string>
+
 </resources>

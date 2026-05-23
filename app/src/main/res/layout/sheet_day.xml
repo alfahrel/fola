@@ -27,12 +27,9 @@
             android:id="@+id/tvHolidayBadge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="3dp"
             android:textAppearance="?attr/textAppearanceLabelSmall"
-            android:textColor="?attr/colorOnError"
-            android:background="@drawable/bg_holiday"
-            android:layout_marginBottom="6dp" />
+            android:textColor="?attr/colorError"
+            android:layout_marginBottom="4dp" />
 
         <TextView
             android:id="@+id/tvHolidayName"

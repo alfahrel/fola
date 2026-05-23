@@ -7,9 +7,11 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -188,23 +190,11 @@ class TaskAdapter(
                 val paint      = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = bgColor }
 
                 val rect = if (isSwipingRight)
-                    RectF(
-                        item.left.toFloat(),
-                        item.top.toFloat(),
-                        item.left + dX,
-                        item.bottom.toFloat()
-                    )
+                    RectF(item.left.toFloat(), item.top.toFloat(), item.left + dX, item.bottom.toFloat())
                 else
-                    RectF(
-                        item.right + dX,
-                        item.top.toFloat(),
-                        item.right.toFloat(),
-                        item.bottom.toFloat()
-                    )
+                    RectF(item.right + dX, item.top.toFloat(), item.right.toFloat(), item.bottom.toFloat())
 
-                val path = Path().apply {
-                    addRoundRect(rect, radius, radius, Path.Direction.CW)
-                }
+                val path = Path().apply { addRoundRect(rect, radius, radius, Path.Direction.CW) }
                 c.drawPath(path, paint)
 
                 val icon = ContextCompat.getDrawable(context, iconRes)
@@ -232,7 +222,7 @@ class TaskAdapter(
     }
 
     inner class HeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val tvHeader: TextView = view.findViewById(R.id.tvSectionHeader)
+        private val tvHeader: TextView   = view.findViewById(R.id.tvSectionHeader)
         private val ivChevron: ImageView = view.findViewById(R.id.ivChevron)
 
         fun bind(title: String, expanded: Boolean) {
@@ -246,11 +236,12 @@ class TaskAdapter(
     }
 
     inner class TaskViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val check: MaterialCheckBox = view.findViewById(R.id.checkTask)
-        private val tvTitle: TextView = view.findViewById(R.id.tvTaskTitle)
-        private val tvDateRange: TextView = view.findViewById(R.id.tvTaskDateRange)
-        private val tvCategory: TextView = view.findViewById(R.id.tvTaskCategory)
-        private val tvRepeat: TextView = view.findViewById(R.id.tvTaskRepeat)
+        private val check: MaterialCheckBox   = view.findViewById(R.id.checkTask)
+        private val tvTitle: TextView         = view.findViewById(R.id.tvTaskTitle)
+        private val tvDateRange: TextView     = view.findViewById(R.id.tvTaskDateRange)
+        private val tvCategory: TextView      = view.findViewById(R.id.tvTaskCategory)
+        private val tvRepeat: TextView        = view.findViewById(R.id.tvTaskRepeat)
+        private val celebration: CompletionCelebrationView = view.findViewById(R.id.celebrationView)
 
         fun bind(task: Task) {
             tvTitle.text    = task.title
@@ -295,13 +286,10 @@ class TaskAdapter(
             val due   = task.dueDateMs
 
             val dateText = when {
-                start != null && due != null ->
-                    "${fmt.format(Date(start))} – Due ${fmt.format(Date(due))}"
-                due != null ->
-                    "Due ${fmt.format(Date(due))}"
-                start != null ->
-                    "Starts ${fmt.format(Date(start))}"
-                else -> null
+                start != null && due != null -> "${fmt.format(Date(start))} – Due ${fmt.format(Date(due))}"
+                due   != null               -> "Due ${fmt.format(Date(due))}"
+                start != null               -> "Starts ${fmt.format(Date(start))}"
+                else                         -> null
             }
 
             if (dateText != null) {
@@ -325,8 +313,32 @@ class TaskAdapter(
 
             check.setOnCheckedChangeListener(null)
             check.isChecked = task.isCompleted
-            check.setOnCheckedChangeListener { _, checked -> onToggle(task, checked) }
+            check.setOnCheckedChangeListener { _, checked ->
+                if (checked) {
+                    val colors = celebrationColors(itemView)
+                    val loc    = IntArray(2)
+                    check.getLocationInWindow(loc)
+                    val cardLoc = IntArray(2)
+                    itemView.getLocationInWindow(cardLoc)
+                    val cx = (loc[0] - cardLoc[0] + check.width / 2).toFloat()
+                    val cy = (loc[1] - cardLoc[1] + check.height / 2).toFloat()
+                    celebration.burst(cx, cy, colors)
+                }
+                onToggle(task, checked)
+            }
             itemView.setOnLongClickListener { onLongClick(task); true }
+        }
+
+        private fun celebrationColors(view: View): IntArray {
+            fun attr(a: Int) = MaterialColors.getColor(view, a)
+            return intArrayOf(
+                attr(com.google.android.material.R.attr.colorPrimaryVariant),
+                attr(com.google.android.material.R.attr.colorSecondary),
+                attr(com.google.android.material.R.attr.colorTertiary),
+                attr(com.google.android.material.R.attr.colorPrimaryContainer),
+                attr(com.google.android.material.R.attr.colorSecondaryContainer),
+                attr(com.google.android.material.R.attr.colorTertiaryContainer)
+            )
         }
     }
 }

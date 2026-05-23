@@ -34,6 +34,7 @@ class MonthFragment : Fragment() {
     }
 
     private var taskDates: Set<String> = emptySet()
+    private var hasNoDateTask: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_month, container, false)
@@ -64,10 +65,26 @@ class MonthFragment : Fragment() {
                 set(year, month + 1, 1, 0, 0, 0)
                 set(Calendar.MILLISECOND, 0)
             }
-            val tasks = db.taskDao().getTasksForDay(startCal.timeInMillis, endCal.timeInMillis)
-            val fmt   = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-            taskDates = tasks.flatMap { task ->
+            val todayStart = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.timeInMillis
+
+            val datedTasks  = withContext(Dispatchers.IO) {
+                db.taskDao().getTasksForDay(startCal.timeInMillis, endCal.timeInMillis)
+            }
+            val noDateTasks = withContext(Dispatchers.IO) {
+                db.taskDao().getActiveTasksForDay(0L, Long.MAX_VALUE)
+                    .filter { it.startDateMs == null && it.dueDateMs == null }
+            }
+
+            hasNoDateTask = noDateTasks.isNotEmpty()
+
+            val fmt = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            taskDates = datedTasks.flatMap { task ->
                 val dates = mutableListOf<String>()
                 task.dueDateMs?.let   { dates.add(fmt.format(Date(it))) }
                 task.startDateMs?.let { dates.add(fmt.format(Date(it))) }
@@ -75,16 +92,16 @@ class MonthFragment : Fragment() {
             }.toSet()
 
             withContext(Dispatchers.Main) {
-                buildAndSetAdapter(year, month)
+                buildAndSetAdapter(year, month, todayStart)
             }
         }
     }
 
-    private fun buildAndSetAdapter(year: Int, month: Int) {
+    private fun buildAndSetAdapter(year: Int, month: Int, todayStart: Long) {
         view?.findViewById<RecyclerView>(R.id.rvCalendar)?.also {
             it.layoutManager = GridLayoutManager(requireContext(), 7)
             it.itemAnimator  = null
-            it.adapter       = CalendarAdapter(buildDayList(year, month)) { day ->
+            it.adapter       = CalendarAdapter(buildDayList(year, month, todayStart)) { day ->
                 openDaySheet(day, year, month)
             }
         }
@@ -97,9 +114,28 @@ class MonthFragment : Fragment() {
                 set(year, month, day.day, 0, 0, 0)
                 set(Calendar.MILLISECOND, 0)
             }
-            val startMs = cal.timeInMillis
-            val endMs   = startMs + 86_400_000L
-            val tasks   = db.taskDao().getTasksForDay(startMs, endMs)
+            val startMs     = cal.timeInMillis
+            val endMs       = startMs + 86_400_000L
+            val todayStart  = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.timeInMillis
+
+            val datedTasks  = withContext(Dispatchers.IO) {
+                db.taskDao().getTasksForDay(startMs, endMs)
+            }
+            val noDateTasks = withContext(Dispatchers.IO) {
+                db.taskDao().getActiveTasksForDay(0L, Long.MAX_VALUE)
+                    .filter { it.startDateMs == null && it.dueDateMs == null }
+            }
+
+            val tasks = if (startMs >= todayStart) {
+                (datedTasks + noDateTasks).distinctBy { it.id }
+            } else {
+                datedTasks
+            }
 
             withContext(Dispatchers.Main) {
                 DaySheet.newInstance(day, tasks).show(parentFragmentManager, "day_sheet")
@@ -109,7 +145,7 @@ class MonthFragment : Fragment() {
 
     private fun getHolidays() = (requireActivity() as CalendarActivity).getCurrentHolidays()
 
-    private fun buildDayList(year: Int, month: Int): List<CalendarDay> {
+    private fun buildDayList(year: Int, month: Int, todayStart: Long): List<CalendarDay> {
         val holidays = getHolidays()
         val days     = mutableListOf<CalendarDay>()
         val tmpCal   = Calendar.getInstance().apply { set(year, month, 1) }
@@ -124,28 +160,39 @@ class MonthFragment : Fragment() {
             add(Calendar.DAY_OF_MONTH, -firstDow)
         }
         repeat(firstDow) {
-            val d   = prevCal.get(Calendar.DAY_OF_MONTH)
-            val m   = prevCal.get(Calendar.MONTH)
-            val y   = prevCal.get(Calendar.YEAR)
-            val dow = prevCal.get(Calendar.DAY_OF_WEEK)
-            val key = String.format("%04d-%02d-%02d", y, m + 1, d)
-            val entry = holidays[key]
-            days.add(CalendarDay(d, false, entry != null, dow == Calendar.SUNDAY, entry?.name, entry?.description, entry?.type, isTrailing = true))
+            val d      = prevCal.get(Calendar.DAY_OF_MONTH)
+            val m      = prevCal.get(Calendar.MONTH)
+            val y      = prevCal.get(Calendar.YEAR)
+            val dow    = prevCal.get(Calendar.DAY_OF_WEEK)
+            val key    = String.format("%04d-%02d-%02d", y, m + 1, d)
+            val entry  = holidays[key]
+            val dayStart = (prevCal.clone() as Calendar).apply {
+                set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+            }
+            val taskKey  = fmt.format(prevCal.time)
+            val hasTask  = taskKey in taskDates || (hasNoDateTask && dayStart.timeInMillis >= todayStart)
+            days.add(CalendarDay(d, false, entry != null, dow == Calendar.SUNDAY, entry?.name, entry?.description, entry?.type, isTrailing = true, hasTask = hasTask))
             prevCal.add(Calendar.DAY_OF_MONTH, 1)
         }
 
         val daysInMonth = tmpCal.getActualMaximum(Calendar.DAY_OF_MONTH)
         for (day in 1..daysInMonth) {
             tmpCal.set(year, month, day)
-            val dow     = tmpCal.get(Calendar.DAY_OF_WEEK)
-            val key     = String.format("%04d-%02d-%02d", year, month + 1, day)
-            val entry   = holidays[key]
-            val isToday = year == today.get(Calendar.YEAR)
+            val dow      = tmpCal.get(Calendar.DAY_OF_WEEK)
+            val key      = String.format("%04d-%02d-%02d", year, month + 1, day)
+            val entry    = holidays[key]
+            val isToday  = year == today.get(Calendar.YEAR)
                     && month == today.get(Calendar.MONTH)
                     && day == today.get(Calendar.DAY_OF_MONTH)
-            val taskKey = fmt.format(tmpCal.time)
+            val taskKey  = fmt.format(tmpCal.time)
+            val dayStart = (tmpCal.clone() as Calendar).apply {
+                set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+            }.timeInMillis
+            val hasTask  = taskKey in taskDates || (hasNoDateTask && dayStart >= todayStart)
             days.add(CalendarDay(day, isToday, entry != null, dow == Calendar.SUNDAY, entry?.name, entry?.description, entry?.type,
-                hasTask = taskKey in taskDates))
+                hasTask = hasTask))
         }
 
         val nextCal = Calendar.getInstance().apply {
@@ -153,13 +200,19 @@ class MonthFragment : Fragment() {
             add(Calendar.DAY_OF_MONTH, 1)
         }
         while (days.size < 42) {
-            val d   = nextCal.get(Calendar.DAY_OF_MONTH)
-            val m   = nextCal.get(Calendar.MONTH)
-            val y   = nextCal.get(Calendar.YEAR)
-            val dow = nextCal.get(Calendar.DAY_OF_WEEK)
-            val key = String.format("%04d-%02d-%02d", y, m + 1, d)
-            val entry = holidays[key]
-            days.add(CalendarDay(d, false, entry != null, dow == Calendar.SUNDAY, entry?.name, entry?.description, entry?.type, isTrailing = true))
+            val d      = nextCal.get(Calendar.DAY_OF_MONTH)
+            val m      = nextCal.get(Calendar.MONTH)
+            val y      = nextCal.get(Calendar.YEAR)
+            val dow    = nextCal.get(Calendar.DAY_OF_WEEK)
+            val key    = String.format("%04d-%02d-%02d", y, m + 1, d)
+            val entry  = holidays[key]
+            val dayStart = (nextCal.clone() as Calendar).apply {
+                set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+            }
+            val taskKey  = fmt.format(nextCal.time)
+            val hasTask  = taskKey in taskDates || (hasNoDateTask && dayStart.timeInMillis >= todayStart)
+            days.add(CalendarDay(d, false, entry != null, dow == Calendar.SUNDAY, entry?.name, entry?.description, entry?.type, isTrailing = true, hasTask = hasTask))
             nextCal.add(Calendar.DAY_OF_MONTH, 1)
         }
 
