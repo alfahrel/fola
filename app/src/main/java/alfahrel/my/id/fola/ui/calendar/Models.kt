@@ -8,7 +8,8 @@ data class CalendarDay(
     val holidayName: String?,
     val holidayDesc: String?,
     val holidayType: HolidayType? = null,
-    val isTrailing: Boolean = false
+    val isTrailing: Boolean = false,
+    val hasTask: Boolean = false
 )
 
 data class HolidayInfo(

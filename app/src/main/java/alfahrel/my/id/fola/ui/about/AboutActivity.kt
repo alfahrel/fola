@@ -19,7 +19,7 @@ class AboutActivity : BaseActivity() {
         setSupportActionBar(findViewById<Toolbar>(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        findViewById<TextView>(R.id.tvVersion).text = "0.1.3-alpha.2"
+        findViewById<TextView>(R.id.tvVersion).text = "0.1.3-beta.1"
 
         findViewById<MaterialButton>(R.id.btnSourceCode).setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/alfahrel/fola")))

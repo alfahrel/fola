@@ -37,6 +37,7 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class MainActivity : BaseActivity() {
 
@@ -112,9 +113,71 @@ class MainActivity : BaseActivity() {
     }
 
     private fun triggerMidnightWorker() {
-        val request = OneTimeWorkRequestBuilder<MidnightWorker>().build()
-        WorkManager.getInstance(this).enqueue(request)
-        Toast.makeText(this, "Midnight worker triggered", Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            val dao = AppDatabase.getInstance(this@MainActivity).taskDao()
+            val sdf = java.text.SimpleDateFormat("MMM d yyyy HH:mm:ss", java.util.Locale.getDefault())
+
+            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                val allRepeat = (dao.getAllActiveTasksSync() + dao.getAllCompletedTasksSync())
+                    .filter { it.isRepeat }
+
+                android.util.Log.d("DBG", "=== BEFORE REWIND ===")
+                allRepeat.forEach { task ->
+                    android.util.Log.d("DBG", "Task: ${task.title} | completed: ${task.isCompleted} | due: ${task.dueDateMs?.let { sdf.format(it) }}")
+                }
+
+                allRepeat.forEach { task ->
+                    val rewound = Calendar.getInstance().apply {
+                        set(Calendar.HOUR_OF_DAY, 0)
+                        set(Calendar.MINUTE, 0)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                        when (task.repeatType) {
+                            alfahrel.my.id.fola.data.model.RepeatType.DAILY   -> add(Calendar.DAY_OF_MONTH, -task.repeatInterval)
+                            alfahrel.my.id.fola.data.model.RepeatType.WEEKLY  -> add(Calendar.WEEK_OF_YEAR, -task.repeatInterval)
+                            alfahrel.my.id.fola.data.model.RepeatType.MONTHLY -> add(Calendar.MONTH,        -task.repeatInterval)
+                            alfahrel.my.id.fola.data.model.RepeatType.CUSTOM  -> add(Calendar.DAY_OF_MONTH, -task.repeatInterval)
+                        }
+                    }.timeInMillis
+                    android.util.Log.d("DBG", "Rewinding ${task.title} to ${sdf.format(rewound)}")
+                    dao.updateSync(task.copy(dueDateMs = rewound, isCompleted = false))
+                }
+
+                android.util.Log.d("DBG", "=== AFTER REWIND, BEFORE WORKER ===")
+                (dao.getAllActiveTasksSync() + dao.getAllCompletedTasksSync())
+                    .filter { it.isRepeat }
+                    .forEach { task ->
+                        android.util.Log.d("DBG", "Task: ${task.title} | completed: ${task.isCompleted} | due: ${task.dueDateMs?.let { sdf.format(it) }}")
+                    }
+            }
+
+            val request = OneTimeWorkRequestBuilder<MidnightWorker>().build()
+            WorkManager.getInstance(this@MainActivity).enqueue(request)
+
+            kotlinx.coroutines.delay(2000)
+
+            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                android.util.Log.d("DBG", "=== AFTER WORKER (2s delay) ===")
+                val startOfToday = Calendar.getInstance().apply {
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }.timeInMillis
+                android.util.Log.d("DBG", "startOfToday: ${sdf.format(startOfToday)}")
+
+                (dao.getAllActiveTasksSync() + dao.getAllCompletedTasksSync())
+                    .filter { it.isRepeat }
+                    .forEach { task ->
+                        android.util.Log.d("DBG", "Task: ${task.title} | completed: ${task.isCompleted} | due: ${task.dueDateMs?.let { sdf.format(it) }}")
+                        val due = task.dueDateMs
+                        val windowEnd = startOfToday + 86_400_000L
+                        android.util.Log.d("DBG", "  due <= windowEnd? ${due != null && due <= windowEnd} | due=$due windowEnd=$windowEnd")
+                    }
+            }
+
+            Toast.makeText(this@MainActivity, "Done — check Logcat for DBG tag", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun setupToolbar() {

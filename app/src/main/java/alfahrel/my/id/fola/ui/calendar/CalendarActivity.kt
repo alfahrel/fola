@@ -1,6 +1,7 @@
 package alfahrel.my.id.fola.ui.calendar
 
 import alfahrel.my.id.fola.R
+import alfahrel.my.id.fola.data.repository.AppDatabase
 import alfahrel.my.id.fola.service.MidnightWorker
 import alfahrel.my.id.fola.util.BaseActivity
 import android.content.BroadcastReceiver
@@ -16,11 +17,18 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
+import java.util.Date
 
 class CalendarActivity : BaseActivity() {
 
@@ -29,6 +37,7 @@ class CalendarActivity : BaseActivity() {
     }
 
     private lateinit var toolbar: Toolbar
+    private lateinit var collapsingToolbar: CollapsingToolbarLayout
     private lateinit var tvMonthYear: TextView
     private lateinit var btnPrev: ImageButton
     private lateinit var btnNext: ImageButton
@@ -36,6 +45,7 @@ class CalendarActivity : BaseActivity() {
     private lateinit var rvHolidays: RecyclerView
     private lateinit var tvNoHoliday: LinearLayout
     private lateinit var fabCurrentMonth: FloatingActionButton
+    private lateinit var rootLayout: NestedScrollView
 
     private val dateChangeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -44,7 +54,7 @@ class CalendarActivity : BaseActivity() {
                     if (fragment is MonthFragment) fragment.refreshToday()
                 }
                 val cal = pageToCalendar(viewPager.currentItem)
-                updateHolidays(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH))
+                updateEvents(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH))
             }
         }
     }
@@ -54,14 +64,16 @@ class CalendarActivity : BaseActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_calendar)
 
-        toolbar         = findViewById(R.id.toolbar)
-        tvMonthYear     = findViewById(R.id.tvMonthYear)
-        btnPrev         = findViewById(R.id.btnPrev)
-        btnNext         = findViewById(R.id.btnNext)
-        viewPager       = findViewById(R.id.viewPager)
-        rvHolidays      = findViewById(R.id.rvHolidays)
-        tvNoHoliday     = findViewById(R.id.tvNoHoliday)
-        fabCurrentMonth = findViewById(R.id.fabCurrentMonth)
+        toolbar           = findViewById(R.id.toolbar)
+        collapsingToolbar = findViewById(R.id.collapsingToolbar)
+        tvMonthYear       = findViewById(R.id.tvMonthYear)
+        btnPrev           = findViewById(R.id.btnPrev)
+        btnNext           = findViewById(R.id.btnNext)
+        viewPager         = findViewById(R.id.viewPager)
+        rvHolidays        = findViewById(R.id.rvHolidays)
+        tvNoHoliday       = findViewById(R.id.tvNoHoliday)
+        fabCurrentMonth   = findViewById(R.id.fabCurrentMonth)
+        rootLayout        = findViewById(R.id.rootLayout)
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -71,29 +83,24 @@ class CalendarActivity : BaseActivity() {
 
         viewPager.adapter = MonthPagerAdapter(this)
         viewPager.setCurrentItem(START_POSITION, false)
+        viewPager.isUserInputEnabled = false
 
         val initialCal   = pageToCalendar(START_POSITION)
         val initialYear  = initialCal.get(Calendar.YEAR)
         val initialMonth = initialCal.get(Calendar.MONTH)
-        val monthNames   = resources.getStringArray(R.array.month_names)
 
-        tvMonthYear.text = monthNames[initialMonth]
-        updateHolidays(initialYear, initialMonth)
+        updateMonthYear(initialYear, initialMonth)
+        updateEvents(initialYear, initialMonth)
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 val cal   = pageToCalendar(position)
                 val year  = cal.get(Calendar.YEAR)
                 val month = cal.get(Calendar.MONTH)
-                val names = resources.getStringArray(R.array.month_names)
-                tvMonthYear.text = names[month]
-                updateHolidays(year, month)
+                updateMonthYear(year, month)
+                updateEvents(year, month)
             }
         })
-
-        viewPager.setPageTransformer { page, _ ->
-            page.parent.requestDisallowInterceptTouchEvent(true)
-        }
 
         btnPrev.setOnClickListener { viewPager.setCurrentItem(viewPager.currentItem - 1, true) }
         btnNext.setOnClickListener { viewPager.setCurrentItem(viewPager.currentItem + 1, true) }
@@ -129,18 +136,69 @@ class CalendarActivity : BaseActivity() {
 
     fun getCurrentHolidays() = HolidaysData.allHolidays
 
-    private fun updateHolidays(year: Int, month: Int) {
-        val holidays = getHolidaysForMonth(year, month)
-        if (holidays.isEmpty()) {
-            rvHolidays.visibility  = View.GONE
-            tvNoHoliday.visibility = View.VISIBLE
-            tvNoHoliday.alpha = 0f
-            tvNoHoliday.translationY = 40f
-            tvNoHoliday.animate().alpha(1f).translationY(0f).setDuration(300).setStartDelay(100).start()
-        } else {
-            rvHolidays.visibility  = View.VISIBLE
-            tvNoHoliday.visibility = View.GONE
-            rvHolidays.adapter = HolidayAdapter(holidays)
+    private fun updateMonthYear(year: Int, month: Int) {
+        val monthNames = resources.getStringArray(R.array.month_names)
+        val label      = "${monthNames[month]} $year"
+        collapsingToolbar.title = label
+        tvMonthYear.text        = monthNames[month]
+    }
+
+    private fun updateEvents(year: Int, month: Int) {
+        val db = AppDatabase.getInstance(this)
+        lifecycleScope.launch {
+            val startCal = Calendar.getInstance().apply {
+                set(year, month, 1, 0, 0, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+            val endCal = Calendar.getInstance().apply {
+                set(year, month + 1, 1, 0, 0, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+            val tasks = withContext(Dispatchers.IO) {
+                db.taskDao().getTasksForDay(startCal.timeInMillis, endCal.timeInMillis)
+            }
+
+            val holidays     = getHolidaysForMonth(year, month)
+            val events       = mutableListOf<DayEvent>()
+            val tmpCal       = Calendar.getInstance()
+
+            holidays.forEach { events.add(DayEvent.Holiday(it)) }
+
+            tasks.forEach { task ->
+                val dateMs = task.dueDateMs ?: task.startDateMs
+                if (dateMs != null) {
+                    tmpCal.timeInMillis = dateMs
+                    val tYear  = tmpCal.get(Calendar.YEAR)
+                    val tMonth = tmpCal.get(Calendar.MONTH)
+                    if (tYear == year && tMonth == month) {
+                        events.add(DayEvent.TaskEvent(task, dateMs))
+                    }
+                }
+            }
+
+            events.sortWith(compareBy {
+                when (it) {
+                    is DayEvent.Holiday   -> it.info.day
+                    is DayEvent.TaskEvent -> {
+                        tmpCal.timeInMillis = it.dateMs
+                        tmpCal.get(Calendar.DAY_OF_MONTH)
+                    }
+                }
+            })
+
+            withContext(Dispatchers.Main) {
+                if (events.isEmpty()) {
+                    rvHolidays.visibility  = View.GONE
+                    tvNoHoliday.visibility = View.VISIBLE
+                    tvNoHoliday.alpha        = 0f
+                    tvNoHoliday.translationY = 40f
+                    tvNoHoliday.animate().alpha(1f).translationY(0f).setDuration(300).setStartDelay(100).start()
+                } else {
+                    rvHolidays.visibility  = View.VISIBLE
+                    tvNoHoliday.visibility = View.GONE
+                    rvHolidays.adapter     = HolidayAdapter(events)
+                }
+            }
         }
     }
 

@@ -57,15 +57,22 @@ class TaskRemoteViewsFactory(
                 active    = db.taskDao().getAllActiveTasksSync()
                 completed = if (showDone) db.taskDao().getAllCompletedTasksSync() else emptyList()
             } else {
-                val cal = Calendar.getInstance().apply {
+                val startOfDay = Calendar.getInstance().apply {
                     set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
                     set(Calendar.SECOND, 0);      set(Calendar.MILLISECOND, 0)
-                }
-                val startOfDay  = cal.timeInMillis
+                }.timeInMillis
                 val windowStart = if (dateFilter == 1) startOfDay + 86_400_000L else startOfDay
                 val windowEnd   = startOfDay + (dateFilter + 1) * 86_400_000L
-                active    = db.taskDao().getActiveTasksForDaySync(windowStart, windowEnd)
-                completed = if (showDone) db.taskDao().getCompletedTasksForDaySync(windowStart, windowEnd) else emptyList()
+
+                val repeatActive    = db.taskDao().getAllActiveTasksSync().filter { it.isRepeat && (it.dueDateMs == null || it.dueDateMs <= windowEnd) }
+                val nonRepeatActive = db.taskDao().getActiveTasksForDaySync(windowStart, windowEnd).filter { !it.isRepeat }
+                active = (repeatActive + nonRepeatActive).distinctBy { it.id }
+
+                completed = if (showDone) {
+                    val repeatCompleted    = db.taskDao().getAllCompletedTasksSync().filter { it.isRepeat && (it.dueDateMs == null || it.dueDateMs <= windowEnd) }
+                    val nonRepeatCompleted = db.taskDao().getCompletedTasksForDaySync(windowStart, windowEnd).filter { !it.isRepeat }
+                    (repeatCompleted + nonRepeatCompleted).distinctBy { it.id }
+                } else emptyList()
             }
             latch.countDown()
         }.start()
@@ -128,6 +135,7 @@ class TaskRemoteViewsFactory(
         val fillIntent = Intent().apply {
             putExtra(TaskWidgetProvider.EXTRA_TASK_ID, -1L)
             putExtra("is_header", true)
+            putExtra("open_app", false)
         }
         views.setOnClickFillInIntent(R.id.widgetHeaderText,    fillIntent)
         views.setOnClickFillInIntent(R.id.widgetHeaderChevron, fillIntent)
@@ -201,12 +209,21 @@ class TaskRemoteViewsFactory(
             views.setInt(R.id.widgetItemCheck, "setColorFilter", service.getColor(R.color.widget_text_secondary))
         }
 
-        val fillIntent = Intent().apply {
+        val checkIntent = Intent().apply {
             putExtra(TaskWidgetProvider.EXTRA_TASK_ID,   task.id)
             putExtra(TaskWidgetProvider.EXTRA_COMPLETED, task.isCompleted)
             putExtra("is_header", false)
+            putExtra("open_app", false)
         }
-        views.setOnClickFillInIntent(R.id.widgetItemCheck, fillIntent)
+        views.setOnClickFillInIntent(R.id.widgetItemCheck, checkIntent)
+
+        val openIntent = Intent().apply {
+            putExtra(TaskWidgetProvider.EXTRA_TASK_ID, task.id)
+            putExtra("is_header", false)
+            putExtra("open_app", true)
+        }
+        views.setOnClickFillInIntent(R.id.widgetItemRoot, openIntent)
+
         return views
     }
 

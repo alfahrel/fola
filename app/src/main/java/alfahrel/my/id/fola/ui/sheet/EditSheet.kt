@@ -17,21 +17,23 @@ import alfahrel.my.id.fola.R
 import alfahrel.my.id.fola.data.model.RepeatType
 import alfahrel.my.id.fola.data.model.Task
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
+import java.util.TimeZone
 
 class EditSheet(
     private val task: Task,
     private val onUpdateTask: (Task) -> Unit
 ) : BottomSheetDialogFragment() {
 
-    private var selectedDueDateMs:        Long?       = task.dueDateMs
-    private var selectedCategory:         String      = task.category
-    private var isRepeat:                 Boolean     = task.isRepeat
-    private var selectedRepeat:           RepeatType  = task.repeatType
-    private var selectedUnit:             String      = task.repeatUnit
-    private var selectedStartDateMs:      Long?       = if (task.category != "Habit") task.startDateMs else null
-    private var selectedHabitStartDateMs: Long?       = if (task.category == "Habit") task.startDateMs else null
-    private var selectedHabitEndDateMs:   Long?       = if (task.category == "Habit") task.dueDateMs   else null
+    private var selectedDueDateMs:        Long?      = task.dueDateMs
+    private var selectedCategory:         String     = task.category
+    private var isRepeat:                 Boolean    = task.isRepeat
+    private var selectedRepeat:           RepeatType = task.repeatType
+    private var selectedUnit:             String     = task.repeatUnit
+    private var selectedStartDateMs:      Long?      = if (task.category != "Habit") task.startDateMs else null
+    private var selectedHabitStartDateMs: Long?      = if (task.category == "Habit") task.startDateMs else null
+    private var selectedHabitEndDateMs:   Long?      = if (task.category == "Habit") task.dueDateMs   else null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,6 +51,21 @@ class EditSheet(
         val layoutHabit       = view.findViewById<LinearLayout>(R.id.layoutHabitOptions)
         val layoutCustom      = view.findViewById<LinearLayout>(R.id.layoutCustomRepeat)
         val fmt               = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
+
+        fun utcPickerToLocalMidnight(millis: Long): Long {
+            val utcCal = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+                timeInMillis = millis
+            }
+            return Calendar.getInstance().apply {
+                set(
+                    utcCal.get(Calendar.YEAR),
+                    utcCal.get(Calendar.MONTH),
+                    utcCal.get(Calendar.DAY_OF_MONTH),
+                    0, 0, 0
+                )
+                set(Calendar.MILLISECOND, 0)
+            }.timeInMillis
+        }
 
         etTitle.setText(task.title)
         if (task.repeatType == RepeatType.CUSTOM && task.repeatInterval > 1) {
@@ -90,8 +107,8 @@ class EditSheet(
                 .setSelection(selectedStartDateMs ?: MaterialDatePicker.todayInUtcMilliseconds())
                 .build()
             picker.addOnPositiveButtonClickListener { millis ->
-                selectedStartDateMs   = millis
-                btnPickStartDate.text = fmt.format(millis)
+                selectedStartDateMs   = utcPickerToLocalMidnight(millis)
+                btnPickStartDate.text = fmt.format(selectedStartDateMs!!)
             }
             picker.show(parentFragmentManager, "start_date_picker")
         }
@@ -104,8 +121,8 @@ class EditSheet(
                 .setSelection(selectedDueDateMs ?: MaterialDatePicker.todayInUtcMilliseconds())
                 .build()
             picker.addOnPositiveButtonClickListener { millis ->
-                selectedDueDateMs = millis
-                btnPickDate.text  = fmt.format(millis)
+                selectedDueDateMs = utcPickerToLocalMidnight(millis)
+                btnPickDate.text  = fmt.format(selectedDueDateMs!!)
             }
             picker.show(parentFragmentManager, "date_picker")
         }
@@ -118,8 +135,8 @@ class EditSheet(
                 .setSelection(selectedHabitStartDateMs ?: MaterialDatePicker.todayInUtcMilliseconds())
                 .build()
             picker.addOnPositiveButtonClickListener { millis ->
-                selectedHabitStartDateMs   = millis
-                btnPickHabitStartDate.text = fmt.format(millis)
+                selectedHabitStartDateMs   = utcPickerToLocalMidnight(millis)
+                btnPickHabitStartDate.text = fmt.format(selectedHabitStartDateMs!!)
             }
             picker.show(parentFragmentManager, "habit_start_date_picker")
         }
@@ -132,8 +149,8 @@ class EditSheet(
                 .setSelection(selectedHabitEndDateMs ?: MaterialDatePicker.todayInUtcMilliseconds())
                 .build()
             picker.addOnPositiveButtonClickListener { millis ->
-                selectedHabitEndDateMs   = millis
-                btnPickHabitEndDate.text = fmt.format(millis)
+                selectedHabitEndDateMs   = utcPickerToLocalMidnight(millis)
+                btnPickHabitEndDate.text = fmt.format(selectedHabitEndDateMs!!)
             }
             picker.show(parentFragmentManager, "habit_end_date_picker")
         }

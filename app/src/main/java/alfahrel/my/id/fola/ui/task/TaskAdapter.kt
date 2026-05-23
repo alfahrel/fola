@@ -87,10 +87,12 @@ class TaskAdapter(
                 val due   = dueDateMs
                 val start = startDateMs
                 return when {
-                    due   != null && due   in windowStart until windowEnd -> true
-                    start != null && start in windowStart until windowEnd -> true
-                    due == null && start == null                          -> true
-                    else -> false
+                    isRepeat && due != null && due <= startOfToday + 86_400_000L -> true
+                    isRepeat && due == null                                       -> true
+                    due   != null && due >= windowStart && due <= windowEnd      -> true
+                    start != null && start >= windowStart && start <= windowEnd  -> true
+                    due == null && start == null                                  -> true
+                    else                                                          -> false
                 }
             }
 

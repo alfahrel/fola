@@ -68,7 +68,7 @@ class MidnightWorker(context: Context, params: WorkerParameters) : Worker(contex
 
     private fun advanceToNextOccurrence(task: Task, startOfToday: Long): Long {
         var next = task.dueDateMs ?: startOfToday
-        while (next < startOfToday) {
+        while (next <= startOfToday) {
             val cal = Calendar.getInstance().apply { timeInMillis = next }
             when (task.repeatType) {
                 RepeatType.DAILY   -> cal.add(Calendar.DAY_OF_MONTH, task.repeatInterval)
@@ -78,15 +78,7 @@ class MidnightWorker(context: Context, params: WorkerParameters) : Worker(contex
             }
             next = cal.timeInMillis
         }
-        if (next == startOfToday) return next
-        val cal = Calendar.getInstance().apply { timeInMillis = next }
-        when (task.repeatType) {
-            RepeatType.DAILY   -> cal.add(Calendar.DAY_OF_MONTH, task.repeatInterval)
-            RepeatType.WEEKLY  -> cal.add(Calendar.WEEK_OF_YEAR, task.repeatInterval)
-            RepeatType.MONTHLY -> cal.add(Calendar.MONTH,        task.repeatInterval)
-            RepeatType.CUSTOM  -> cal.add(Calendar.DAY_OF_MONTH, task.repeatInterval)
-        }
-        return cal.timeInMillis
+        return next
     }
 
     companion object {

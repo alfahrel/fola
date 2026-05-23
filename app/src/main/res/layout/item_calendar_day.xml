@@ -15,12 +15,4 @@
         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
         android:textColor="?attr/colorOnSurface" />
 
-    <View
-        android:id="@+id/dotHoliday"
-        android:layout_width="4dp"
-        android:layout_height="4dp"
-        android:layout_marginTop="2dp"
-        android:background="@drawable/bg_dot_holiday"
-        android:visibility="invisible" />
-
 </LinearLayout>

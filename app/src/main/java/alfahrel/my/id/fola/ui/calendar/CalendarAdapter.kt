@@ -10,12 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import alfahrel.my.id.fola.R
 import com.google.android.material.R as MatR
 
-class CalendarAdapter(private val days: List<CalendarDay>) :
-    RecyclerView.Adapter<CalendarAdapter.DayVH>() {
+class CalendarAdapter(
+    private val days: List<CalendarDay>,
+    private val onDayClick: (CalendarDay) -> Unit
+) : RecyclerView.Adapter<CalendarAdapter.DayVH>() {
 
     inner class DayVH(view: View) : RecyclerView.ViewHolder(view) {
         val tvDay: TextView = view.findViewById(R.id.tvDay)
-        val dot: View       = view.findViewById(R.id.dotHoliday)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -31,51 +32,98 @@ class CalendarAdapter(private val days: List<CalendarDay>) :
             h.tvDay.text       = ""
             h.tvDay.background = null
             h.tvDay.alpha      = 1f
-            h.dot.visibility   = View.INVISIBLE
             return
         }
 
         h.tvDay.text = item.day.toString()
 
+        h.itemView.setOnClickListener {
+            if (!item.isTrailing) onDayClick(item)
+        }
+
         if (item.isTrailing) {
             h.tvDay.background = null
-            h.tvDay.alpha      = 0.35f
+            h.tvDay.alpha      = 0.4f
             h.tvDay.setTextColor(
                 when {
                     item.isHoliday || item.isSunday -> ctx.resolveAttrColor(MatR.attr.colorErrorContainer)
                     else -> ctx.resolveAttrColor(MatR.attr.colorOnSurface)
                 }
             )
-            h.dot.visibility = View.INVISIBLE
             return
         }
 
         h.tvDay.alpha = 1f
 
+        val isJoint   = item.holidayType == HolidayType.JOINT_LEAVE
+        val isHoliday = item.isHoliday && !isJoint
+
         when {
+            item.isToday && item.isSunday && item.hasTask -> {
+                h.tvDay.setBackgroundResource(R.drawable.bg_today_sunday_task)
+                h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnPrimary))
+            }
+            item.isToday && item.isSunday -> {
+                h.tvDay.setBackgroundResource(R.drawable.bg_today_sunday)
+                h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnPrimary))
+            }
+            item.isToday && isJoint && item.hasTask -> {
+                h.tvDay.setBackgroundResource(R.drawable.bg_today_joint_task)
+                h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnPrimary))
+            }
+            item.isToday && isJoint -> {
+                h.tvDay.setBackgroundResource(R.drawable.bg_today_joint)
+                h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnPrimary))
+            }
+            item.isToday && isHoliday && item.hasTask -> {
+                h.tvDay.setBackgroundResource(R.drawable.bg_today_holiday_task)
+                h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnPrimary))
+            }
+            item.isToday && isHoliday -> {
+                h.tvDay.setBackgroundResource(R.drawable.bg_today_holiday)
+                h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnPrimary))
+            }
+            item.isToday && item.hasTask -> {
+                h.tvDay.setBackgroundResource(R.drawable.bg_today_task)
+                h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnPrimary))
+            }
             item.isToday -> {
                 h.tvDay.setBackgroundResource(R.drawable.bg_today)
                 h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnPrimary))
             }
-            item.holidayType == HolidayType.JOINT_LEAVE -> {
+            isJoint && item.hasTask -> {
+                h.tvDay.setBackgroundResource(R.drawable.bg_joint_task)
+                h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnErrorContainer))
+            }
+            isJoint -> {
                 h.tvDay.setBackgroundResource(R.drawable.bg_joint)
                 h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnErrorContainer))
             }
-            item.isHoliday -> {
+            isHoliday && item.hasTask -> {
+                h.tvDay.setBackgroundResource(R.drawable.bg_holiday_task)
+                h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnError))
+            }
+            isHoliday -> {
                 h.tvDay.setBackgroundResource(R.drawable.bg_holiday)
+                h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnError))
+            }
+            item.isSunday && item.hasTask -> {
+                h.tvDay.setBackgroundResource(R.drawable.bg_sunday_task)
                 h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnError))
             }
             item.isSunday -> {
                 h.tvDay.setBackgroundResource(R.drawable.bg_sunday)
                 h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnError))
             }
+            item.hasTask -> {
+                h.tvDay.setBackgroundResource(R.drawable.bg_task)
+                h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorPrimaryVariant))
+            }
             else -> {
                 h.tvDay.background = null
                 h.tvDay.setTextColor(ctx.resolveAttrColor(MatR.attr.colorOnSurface))
             }
         }
-
-        h.dot.visibility = if (item.isHoliday) View.VISIBLE else View.INVISIBLE
     }
 }
 

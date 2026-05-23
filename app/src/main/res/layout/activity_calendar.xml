@@ -18,7 +18,7 @@
             android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            app:title="Calendar"
+            app:title=""
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:expandedTitleMarginStart="16dp"
             app:expandedTitleMarginBottom="16dp"
@@ -72,22 +72,11 @@
 
             </LinearLayout>
 
-            <com.google.android.material.card.MaterialCardView
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="0dp"
-                app:strokeWidth="0dp">
-
-                <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/viewPager"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:overScrollMode="never" />
-
-            </com.google.android.material.card.MaterialCardView>
+                android:layout_height="340dp"
+                android:overScrollMode="never" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvHolidays"
@@ -156,7 +145,7 @@
             android:layout_marginEnd="12dp"
             app:cardBackgroundColor="?attr/colorPrimaryContainer"
             app:cardCornerRadius="28dp"
-            app:cardElevation="4dp"
+            app:cardElevation="0dp"
             app:strokeWidth="0dp">
 
             <LinearLayout
@@ -204,6 +193,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_rounded_calendar_month_24"
             android:contentDescription="Kembali ke bulan ini"
+            android:stateListAnimator="@null"
             app:tint="?attr/colorOnPrimary"
             app:elevation="0dp"
             app:hoveredFocusedTranslationZ="0dp"

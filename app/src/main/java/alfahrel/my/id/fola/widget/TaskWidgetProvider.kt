@@ -30,8 +30,17 @@ class TaskWidgetProvider : AppWidgetProvider() {
         when (intent.action) {
             ACTION_TOGGLE_TASK -> {
                 val isHeader  = intent.getBooleanExtra("is_header", false)
+                val openApp   = intent.getBooleanExtra("open_app", false)
                 val taskId    = intent.getLongExtra(EXTRA_TASK_ID, -1L)
                 val completed = intent.getBooleanExtra(EXTRA_COMPLETED, false)
+
+                if (openApp) {
+                    val launch = Intent(context, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    }
+                    context.startActivity(launch)
+                    return
+                }
 
                 if (isHeader) {
                     val current = WidgetPrefs.loadCompletedExpanded(context, appWidgetId)
@@ -107,9 +116,7 @@ class TaskWidgetProvider : AppWidgetProvider() {
 
             Thread {
                 val tasks   = loadTasks(context, dateFilter, showDone)
-                val total   = tasks.size
-                val done    = tasks.count { it.isCompleted }
-                val isEmpty = total == 0
+                val isEmpty = tasks.isEmpty()
 
                 Handler(Looper.getMainLooper()).post {
                     views.setViewVisibility(R.id.widgetList,  if (isEmpty) View.GONE    else View.VISIBLE)
@@ -122,19 +129,25 @@ class TaskWidgetProvider : AppWidgetProvider() {
 
         private fun loadTasks(context: Context, dateFilter: Int?, showCompleted: Boolean): List<Task> {
             val dao = AppDatabase.getInstance(context).taskDao()
-            return if (dateFilter == null) {
-                if (showCompleted) dao.getAllTasksSync() else dao.getAllActiveTasksSync()
-            } else {
-                val cal = Calendar.getInstance().apply {
-                    set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
-                    set(Calendar.SECOND, 0);      set(Calendar.MILLISECOND, 0)
-                }
-                val startOfDay  = cal.timeInMillis
-                val windowStart = if (dateFilter == 1) startOfDay + 86_400_000L else startOfDay
-                val windowEnd   = startOfDay + (dateFilter + 1) * 86_400_000L
-                if (showCompleted) dao.getTasksForDaySync(windowStart, windowEnd)
-                else dao.getActiveTasksForDaySync(windowStart, windowEnd)
+            if (dateFilter == null) {
+                return if (showCompleted) dao.getAllTasksSync() else dao.getAllActiveTasksSync()
             }
+            val startOfDay = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0);      set(Calendar.MILLISECOND, 0)
+            }.timeInMillis
+            val windowStart = if (dateFilter == 1) startOfDay + 86_400_000L else startOfDay
+            val windowEnd   = startOfDay + (dateFilter + 1) * 86_400_000L
+
+            val repeatActive    = dao.getAllActiveTasksSync().filter { it.isRepeat && (it.dueDateMs == null || it.dueDateMs <= windowEnd) }
+            val nonRepeatActive = dao.getActiveTasksForDaySync(windowStart, windowEnd).filter { !it.isRepeat }
+            val active          = (repeatActive + nonRepeatActive).distinctBy { it.id }
+
+            if (!showCompleted) return active
+            val repeatCompleted    = dao.getAllCompletedTasksSync().filter { it.isRepeat && (it.dueDateMs == null || it.dueDateMs <= windowEnd) }
+            val nonRepeatCompleted = dao.getCompletedTasksForDaySync(windowStart, windowEnd).filter { !it.isRepeat }
+            val completed          = (repeatCompleted + nonRepeatCompleted).distinctBy { it.id }
+            return active + completed
         }
     }
 }
